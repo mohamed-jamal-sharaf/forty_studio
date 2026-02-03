@@ -1,0 +1,71 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-02-02 14:15:03.389574",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "list_of_applications_by_role",
+  "list_of_role_can_create_files_and_folder",
+  "list_of_role_can_delete_files_and_folder"
+ ],
+ "fields": [
+  {
+   "fieldname": "list_of_role_can_delete_files_and_folder",
+   "fieldtype": "Table",
+   "label": "List Of Role Can Delete Files And Folder",
+   "options": "List Of Role Can Delete Files And Folder"
+  },
+  {
+   "fieldname": "list_of_role_can_create_files_and_folder",
+   "fieldtype": "Table",
+   "label": "List Of Role Can Create Files And Folder",
+   "options": "List Of Role Can Create Files And Folder"
+  },
+  {
+   "fieldname": "list_of_applications_by_role",
+   "fieldtype": "Table",
+   "label": "List Of Applications By Role",
+   "options": "List Of Applications By Role"
+  }
+ ],
+ "grid_page_length": 50,
+ "hide_toolbar": 1,
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2026-02-02 16:07:57.093767",
+ "modified_by": "Administrator",
+ "module": "Forty Studio Module",
+ "name": "Forty Studio Permissions",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "Developer User Role",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1,
+ "track_seen": 1,
+ "track_views": 1
+}

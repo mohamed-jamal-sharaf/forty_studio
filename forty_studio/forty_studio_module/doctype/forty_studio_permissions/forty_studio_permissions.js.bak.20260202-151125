@@ -1,0 +1,50 @@
+// Forty Studio Permissions
+// Loads application options for the Select field
+
+let apps_loaded = false;
+let apps_list = [];
+
+frappe.ui.form.on('Forty Studio Permissions', {
+    before_load: function(frm) {
+        // Load apps synchronously before form loads
+        if (!apps_loaded) {
+            frappe.call({
+                method: 'forty_studio.forty_studio_module.doctype.forty_studio_permissions.forty_studio_permissions.get_apps_for_select',
+                async: false,
+                callback: function(r) {
+                    if (r.message) {
+                        apps_list = r.message;
+                        apps_loaded = true;
+                        
+                        // Set options on the docfield
+                        let options = apps_list.join('\n');
+                        frappe.meta.get_docfield('List Of Applications By Role', 'application_name').options = options;
+                    }
+                }
+            });
+        }
+    },
+
+    refresh: function(frm) {
+        // Ensure options are set on refresh too
+        if (apps_list.length > 0) {
+            let options = apps_list.join('\n');
+            frappe.meta.get_docfield('List Of Applications By Role', 'application_name').options = options;
+            
+            if (frm.fields_dict.list_of_applications_by_role && frm.fields_dict.list_of_applications_by_role.grid) {
+                frm.fields_dict.list_of_applications_by_role.grid.update_docfield_property('application_name', 'options', options);
+            }
+        }
+        
+        // Info section
+        frm.set_intro(`
+            <div style="padding: 10px; background: #e3f2fd; border-radius: 8px;">
+                <h4 style="margin: 0 0 10px 0; color: #1565c0;">📋 Permissions Guide</h4>
+                <p style="margin: 5px 0;"><strong>Applications By Role:</strong> Which apps each role can access</p>
+                <p style="margin: 5px 0;"><strong>Create Permission:</strong> Roles that can create files/folders</p>
+                <p style="margin: 5px 0;"><strong>Delete Permission:</strong> Roles that can delete files/folders</p>
+                <p style="margin: 10px 0 0; color: #666;"><em>System Manager always has full access</em></p>
+            </div>
+        `);
+    }
+});

@@ -1,0 +1,126 @@
+{
+ "actions": [],
+ "creation": "2026-02-02 13:54:00.106699",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "file_chart_tab",
+  "application_section",
+  "app_name",
+  "column_break_tfdq",
+  "target_path",
+  "column_break_dzrc",
+  "file_path",
+  "section_break_gism",
+  "files_list_html",
+  "section_break_bntr",
+  "my_code",
+  "editor_tab",
+  "editor_html"
+ ],
+ "fields": [
+  {
+   "fieldname": "app_name",
+   "fieldtype": "Select",
+   "label": "Application "
+  },
+  {
+   "fieldname": "column_break_tfdq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "target_path",
+   "fieldtype": "Data",
+   "label": "Target Path",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_dzrc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "file_path",
+   "fieldtype": "Data",
+   "label": "File Path",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_bntr",
+   "fieldtype": "Section Break",
+   "hidden": 1,
+   "label": "Code"
+  },
+  {
+   "fieldname": "my_code",
+   "fieldtype": "Code",
+   "read_only": 1
+  },
+  {
+   "fieldname": "files_list_html",
+   "fieldtype": "HTML"
+  },
+  {
+   "fieldname": "editor_tab",
+   "fieldtype": "Tab Break",
+   "label": "Code Editor"
+  },
+  {
+   "fieldname": "editor_html",
+   "fieldtype": "HTML"
+  },
+  {
+   "fieldname": "file_chart_tab",
+   "fieldtype": "Tab Break",
+   "label": "Application File Chart"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "application_section",
+   "fieldtype": "Section Break",
+   "label": "Select the Application"
+  },
+  {
+   "fieldname": "section_break_gism",
+   "fieldtype": "Section Break"
+  }
+ ],
+ "grid_page_length": 50,
+ "hide_toolbar": 1,
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2026-02-02 16:07:43.580411",
+ "modified_by": "Administrator",
+ "module": "Forty Studio Module",
+ "name": "Forty Studio",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "Developer User Role",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1,
+ "track_seen": 1,
+ "track_views": 1
+}

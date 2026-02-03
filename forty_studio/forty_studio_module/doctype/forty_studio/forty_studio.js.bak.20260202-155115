@@ -1,0 +1,1427 @@
+// =====================================================
+// Forty Studio - Enhanced Monaco Editor with Permission Controls
+// Mohamed Sharaf - Capital Project
+// Version: 3.0.0 - Premium Edition with Permissions
+// Brand Color: #025074
+// =====================================================
+
+const API_PATH = 'forty_studio.forty_studio_module.doctype.forty_studio.forty_studio';
+
+// =====================================================
+// Load Apps Options for Select Field
+// =====================================================
+let APPS_OPTIONS = '';
+
+function loadAppsOptions() {
+    frappe.call({
+        method: `${API_PATH}.get_installed_apps`,
+        async: false,
+        callback: function(r) {
+            if (r.message) {
+                APPS_OPTIONS = r.message;
+            }
+        }
+    });
+}
+
+function setAppFieldOptions(frm) {
+    if (!APPS_OPTIONS) return;
+    
+    // Set options on the app_name field
+    frm.set_df_property('app_name', 'options', APPS_OPTIONS);
+    frm.refresh_field('app_name');
+}
+
+// ==================== CONFIGURATION ====================
+const EDITOR_CONFIG = {
+    MONACO_VERSION: '0.44.0',
+    MONACO_CDN: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor',
+    DEFAULT_HEIGHT: 650,
+    DEFAULT_FONT_SIZE: 14,
+    DEFAULT_TAB_SIZE: 4,
+    AUTOSAVE_DELAY: 60000,
+    BRAND_COLOR: '#025074'
+};
+
+// ==================== BRAND COLORS ====================
+const COLORS = {
+    primary: '#025074',
+    primaryDark: '#013D5C',
+    primaryLight: '#037AA8',
+    secondary: '#05668D',
+    accent: '#02C39A',
+    success: '#10B981',
+    warning: '#F59E0B',
+    error: '#EF4444',
+    dark: '#1F2937',
+    medium: '#6B7280',
+    light: '#F3F4F6',
+    lighter: '#F9FAFB',
+    white: '#FFFFFF'
+};
+
+// ==================== CUSTOM THEMES ====================
+const CUSTOM_THEMES = {
+    'capital-dark': {
+        base: 'vs-dark',
+        inherit: true,
+        rules: [
+            { token: 'comment', foreground: '6A9955', fontStyle: 'italic' },
+            { token: 'keyword', foreground: '569CD6', fontStyle: 'bold' },
+            { token: 'string', foreground: 'CE9178' },
+            { token: 'number', foreground: 'B5CEA8' },
+            { token: 'function', foreground: 'DCDCAA' },
+            { token: 'variable', foreground: '9CDCFE' },
+            { token: 'type', foreground: '4EC9B0' },
+            { token: 'class', foreground: '4EC9B0', fontStyle: 'bold' }
+        ],
+        colors: {
+            'editor.background': '#0D1B2A',
+            'editor.foreground': '#E0E0E0',
+            'editor.lineHighlightBackground': '#1B3A4B',
+            'editor.selectionBackground': '#025074AA',
+            'editorCursor.foreground': '#02C39A',
+            'editorLineNumber.foreground': '#4B5563',
+            'editorLineNumber.activeForeground': '#02C39A',
+            'editor.selectionHighlightBackground': '#025074AA',
+            'editorIndentGuide.background': '#2D3748',
+            'editorIndentGuide.activeBackground': '#4B5563',
+            'editorBracketMatch.background': '#025074',
+            'editorBracketMatch.border': '#02C39A',
+            'minimap.background': '#0D1B2A',
+            'scrollbar.shadow': '#000000',
+            'scrollbarSlider.background': '#025074AA',
+            'scrollbarSlider.hoverBackground': '#037AA8',
+            'scrollbarSlider.activeBackground': '#02C39A'
+        }
+    },
+    'capital-light': {
+        base: 'vs',
+        inherit: true,
+        rules: [
+            { token: 'comment', foreground: '008000', fontStyle: 'italic' },
+            { token: 'keyword', foreground: '0000FF', fontStyle: 'bold' },
+            { token: 'string', foreground: 'A31515' },
+            { token: 'number', foreground: '098658' },
+            { token: 'function', foreground: '795E26' },
+            { token: 'variable', foreground: '001080' },
+            { token: 'type', foreground: '267F99' }
+        ],
+        colors: {
+            'editor.background': '#FFFFFF',
+            'editor.foreground': '#1F2937',
+            'editor.lineHighlightBackground': '#F0F7FF',
+            'editor.selectionBackground': '#ADD6FF',
+            'editorCursor.foreground': '#025074',
+            'editorLineNumber.foreground': '#9CA3AF',
+            'editorLineNumber.activeForeground': '#025074',
+            'editorIndentGuide.background': '#E5E7EB',
+            'editorIndentGuide.activeBackground': '#D1D5DB',
+            'editorBracketMatch.background': '#E0F2FE',
+            'editorBracketMatch.border': '#025074'
+        }
+    },
+    'capital-ocean': {
+        base: 'vs-dark',
+        inherit: true,
+        rules: [
+            { token: 'comment', foreground: '637777', fontStyle: 'italic' },
+            { token: 'keyword', foreground: 'C792EA', fontStyle: 'bold' },
+            { token: 'string', foreground: 'C3E88D' },
+            { token: 'number', foreground: 'F78C6C' },
+            { token: 'function', foreground: '82AAFF' },
+            { token: 'variable', foreground: 'EEFFFF' },
+            { token: 'type', foreground: 'FFCB6B' }
+        ],
+        colors: {
+            'editor.background': '#011627',
+            'editor.foreground': '#D6DEEB',
+            'editor.lineHighlightBackground': '#1D3B53',
+            'editor.selectionBackground': '#5F7E97',
+            'editorCursor.foreground': '#80A4C2',
+            'editorLineNumber.foreground': '#4B6479',
+            'editorLineNumber.activeForeground': '#C792EA'
+        }
+    }
+};
+
+// ==================== GLOBAL STATE ====================
+let editor = null;
+let isMonacoLoaded = false;
+let isFullscreen = false;
+
+// User Permissions State
+let userPermissions = {
+    can_create: false,
+    can_delete: false,
+    allowed_apps: [],
+    is_admin: false
+};
+
+let editorSettings = {
+    theme: localStorage.getItem('forty_studio_theme') || 'capital-dark',
+    fontSize: parseInt(localStorage.getItem('forty_studio_fontsize')) || 14,
+    tabSize: parseInt(localStorage.getItem('forty_studio_tabsize')) || 4,
+    wordWrap: localStorage.getItem('forty_studio_wordwrap') !== 'false',
+    minimap: localStorage.getItem('forty_studio_minimap') !== 'false',
+    lineNumbers: localStorage.getItem('forty_studio_linenumbers') !== 'false',
+    bracketPairs: localStorage.getItem('forty_studio_bracketpairs') !== 'false',
+    indentGuides: localStorage.getItem('forty_studio_indentguides') !== 'false',
+    renderWhitespace: localStorage.getItem('forty_studio_whitespace') || 'none',
+    cursorBlinking: localStorage.getItem('forty_studio_cursorblink') || 'smooth',
+    cursorStyle: localStorage.getItem('forty_studio_cursorstyle') || 'line',
+    smoothScrolling: localStorage.getItem('forty_studio_smoothscroll') !== 'false',
+    formatOnPaste: localStorage.getItem('forty_studio_formatpaste') !== 'false',
+    formatOnType: localStorage.getItem('forty_studio_formattype') !== 'false',
+    autoClosingBrackets: localStorage.getItem('forty_studio_autoclosebrackets') || 'always',
+    autoClosingQuotes: localStorage.getItem('forty_studio_autoclosequotes') || 'always',
+    autoIndent: localStorage.getItem('forty_studio_autoindent') || 'full',
+    folding: localStorage.getItem('forty_studio_folding') !== 'false',
+    showFoldingControls: localStorage.getItem('forty_studio_foldingcontrols') || 'mouseover',
+    colorDecorators: localStorage.getItem('forty_studio_colordecorators') !== 'false',
+    rulers: JSON.parse(localStorage.getItem('forty_studio_rulers') || '[80, 120]'),
+    renderLineHighlight: localStorage.getItem('forty_studio_linehighlight') || 'all',
+    stickyScroll: localStorage.getItem('forty_studio_stickyscroll') !== 'false',
+    inlineSuggest: localStorage.getItem('forty_studio_inlinesuggest') !== 'false'
+};
+
+let editorState = {
+    isDirty: false,
+    lastSavedContent: '',
+    currentFile: null
+};
+
+// ==================== UTILITY FUNCTIONS ====================
+function showAlert(message, type = 'info') {
+    frappe.show_alert({
+        message: __(message),
+        indicator: type === 'success' ? 'green' : type === 'error' ? 'red' : type === 'warning' ? 'orange' : 'blue'
+    }, 5);
+}
+
+function getFileLanguage(filePath) {
+    if (!filePath) return 'javascript';
+
+    const ext = filePath.split('.').pop().toLowerCase();
+    const languageMap = {
+        'py': 'python',
+        'js': 'javascript',
+        'jsx': 'javascript',
+        'ts': 'typescript',
+        'tsx': 'typescript',
+        'html': 'html',
+        'htm': 'html',
+        'css': 'css',
+        'scss': 'scss',
+        'json': 'json',
+        'md': 'markdown',
+        'sql': 'sql',
+        'xml': 'xml',
+        'yaml': 'yaml',
+        'yml': 'yaml',
+        'sh': 'shell',
+        'txt': 'plaintext'
+    };
+
+    return languageMap[ext] || 'plaintext';
+}
+
+function debounce(func, wait) {
+    let timeout;
+    return function (...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func(...args), wait);
+    };
+}
+
+function saveSettings() {
+    Object.entries(editorSettings).forEach(([key, value]) => {
+        const storageKey = `forty_studio_${key.toLowerCase()}`;
+        if (typeof value === 'object') {
+            localStorage.setItem(storageKey, JSON.stringify(value));
+        } else {
+            localStorage.setItem(storageKey, value);
+        }
+    });
+}
+
+// =====================================================
+// Permission Functions
+// =====================================================
+
+async function loadUserPermissions() {
+    try {
+        const res = await frappe.call({
+            method: `${API_PATH}.get_user_permissions`
+        });
+
+        if (res.message) {
+            userPermissions = res.message;
+            console.log('[PERMISSIONS] User permissions loaded:', userPermissions);
+        }
+    } catch (error) {
+        console.error('[PERMISSIONS] Error loading permissions:', error);
+        userPermissions = {
+            can_create: false,
+            can_delete: false,
+            allowed_apps: [],
+            is_admin: false
+        };
+    }
+}
+
+// =====================================================
+// Password Dialog
+// =====================================================
+
+function showPasswordDialog(options) {
+    return new Promise((resolve, reject) => {
+        const action = options.action || 'save';
+
+        let title, description, placeholder;
+
+        if (action === 'delete') {
+            title = __('Confirm Delete');
+            description = __('Type <strong>sure_delete</strong> to confirm deletion');
+            placeholder = 'sure_delete';
+        } else {
+            title = __('Confirm Save');
+            description = __('Type <strong>save_and_edit</strong> to confirm');
+            placeholder = 'save_and_edit';
+        }
+
+        const dialog = new frappe.ui.Dialog({
+            title: title,
+            size: 'small',
+            fields: [
+                {
+                    fieldtype: 'HTML',
+                    options: `
+                        <div style="text-align: center; margin-bottom: 16px;">
+                            <div style="font-size: 48px;">${action === 'delete' ? '🗑️' : '🔐'}</div>
+                            <div style="color: #666; margin-top: 8px;">${description}</div>
+                        </div>
+                    `
+                },
+                {
+                    label: action === 'delete' ? __('Confirmation Code') : __('Confirmation'),
+                    fieldname: 'password',
+                    fieldtype: 'Data',
+                    reqd: 1,
+                    placeholder: placeholder
+                }
+            ],
+            primary_action_label: action === 'delete' ? __('Delete') : __('Confirm'),
+            primary_action: (values) => {
+                dialog.hide();
+                resolve(values.password);
+            },
+            secondary_action_label: __('Cancel'),
+            secondary_action: () => {
+                dialog.hide();
+                reject('cancelled');
+            }
+        });
+
+        dialog.show();
+        setTimeout(() => {
+            dialog.$wrapper.find('input[data-fieldname="password"]').focus();
+        }, 300);
+    });
+}
+
+// ==================== CREATE EDITOR HTML ====================
+function createEditorHTML() {
+    return `
+        <div class="monaco-wrapper" id="monaco-wrapper">
+            <div class="editor-toolbar">
+                <div class="toolbar-section toolbar-left">
+                    <button class="toolbar-btn btn-save primary" title="Save (Ctrl+S)">
+                        <i class="fa fa-save"></i>
+                        <span class="btn-label">Save</span>
+                    </button>
+                    <div class="toolbar-divider"></div>
+                    <div class="btn-group">
+                        <button class="toolbar-btn btn-undo" title="Undo (Ctrl+Z)"><i class="fa fa-undo"></i></button>
+                        <button class="toolbar-btn btn-redo" title="Redo (Ctrl+Y)"><i class="fa fa-repeat"></i></button>
+                    </div>
+                    <div class="toolbar-divider"></div>
+                    <div class="btn-group">
+                        <button class="toolbar-btn btn-format" title="Format Code"><i class="fa fa-indent"></i><span class="btn-label">Format</span></button>
+                        <button class="toolbar-btn btn-find" title="Find"><i class="fa fa-search"></i><span class="btn-label">Find</span></button>
+                        <button class="toolbar-btn btn-replace" title="Replace"><i class="fa fa-exchange"></i><span class="btn-label">Replace</span></button>
+                    </div>
+                    <div class="toolbar-divider"></div>
+                    <div class="btn-group">
+                        <button class="toolbar-btn btn-comment" title="Toggle Comment"><i class="fa fa-commenting-o"></i></button>
+                        <button class="toolbar-btn btn-fold-all" title="Fold All"><i class="fa fa-compress"></i></button>
+                        <button class="toolbar-btn btn-unfold-all" title="Unfold All"><i class="fa fa-expand"></i></button>
+                    </div>
+                </div>
+                <div class="toolbar-section toolbar-center">
+                    <div class="editor-info">
+                        <span class="info-item cursor-position" title="Cursor Position"><i class="fa fa-crosshairs"></i><span class="line-col">Ln 1, Col 1</span></span>
+                        <span class="info-item selection-info" title="Selection" style="display: none;"><i class="fa fa-text-width"></i><span class="selection-text">0 selected</span></span>
+                        <span class="info-item code-language" title="Language"><i class="fa fa-code"></i><span class="lang-name">JavaScript</span></span>
+                    </div>
+                </div>
+                <div class="toolbar-section toolbar-right">
+                    <button class="toolbar-btn btn-settings" title="Editor Settings"><i class="fa fa-cog"></i></button>
+                    <button class="toolbar-btn btn-keyboard" title="Keyboard Shortcuts"><i class="fa fa-keyboard-o"></i></button>
+                    <button class="toolbar-btn btn-fullscreen primary" title="Fullscreen"><i class="fa fa-expand"></i><span class="btn-label">Fullscreen</span></button>
+                </div>
+            </div>
+            <div class="quick-settings-bar">
+                <div class="settings-group">
+                    <label class="setting-label"><i class="fa fa-paint-brush"></i> Theme:</label>
+                    <select class="setting-select select-theme">
+                        <optgroup label="Capital Themes">
+                            <option value="capital-dark">Capital Dark</option>
+                            <option value="capital-light">Capital Light</option>
+                            <option value="capital-ocean">Capital Ocean</option>
+                        </optgroup>
+                        <optgroup label="Monaco Themes">
+                            <option value="vs">VS Light</option>
+                            <option value="vs-dark">VS Dark</option>
+                            <option value="hc-black">High Contrast</option>
+                        </optgroup>
+                    </select>
+                </div>
+                <div class="settings-group">
+                    <label class="setting-label"><i class="fa fa-text-height"></i> Font:</label>
+                    <input type="range" class="setting-range input-fontsize" min="10" max="28" value="${editorSettings.fontSize}">
+                    <span class="setting-value label-fontsize">${editorSettings.fontSize}px</span>
+                </div>
+                <div class="settings-group">
+                    <label class="setting-label"><i class="fa fa-arrows-h"></i> Tab:</label>
+                    <select class="setting-select select-tabsize">
+                        <option value="2">2 spaces</option>
+                        <option value="4">4 spaces</option>
+                        <option value="8">8 spaces</option>
+                    </select>
+                </div>
+                <div class="settings-group toggles">
+                    <label class="toggle-btn ${editorSettings.wordWrap ? 'active' : ''}" title="Word Wrap">
+                        <input type="checkbox" class="toggle-wordwrap" ${editorSettings.wordWrap ? 'checked' : ''}><i class="fa fa-text-width"></i><span>Wrap</span>
+                    </label>
+                    <label class="toggle-btn ${editorSettings.minimap ? 'active' : ''}" title="Minimap">
+                        <input type="checkbox" class="toggle-minimap" ${editorSettings.minimap ? 'checked' : ''}><i class="fa fa-map"></i><span>Map</span>
+                    </label>
+                    <label class="toggle-btn ${editorSettings.lineNumbers ? 'active' : ''}" title="Line Numbers">
+                        <input type="checkbox" class="toggle-linenumbers" ${editorSettings.lineNumbers ? 'checked' : ''}><i class="fa fa-list-ol"></i><span>Lines</span>
+                    </label>
+                </div>
+                <div class="settings-group save-indicator">
+                    <span class="save-status saved"><i class="fa fa-check-circle"></i> Saved</span>
+                </div>
+            </div>
+            <div class="editor-container"></div>
+            <div class="status-bar">
+                <div class="status-left">
+                    <span class="status-item encoding">UTF-8</span>
+                    <span class="status-item eol">LF</span>
+                    <span class="status-item indent-info">Spaces: ${editorSettings.tabSize}</span>
+                </div>
+                <div class="status-center"><span class="status-item file-info"></span></div>
+                <div class="status-right">
+                    <span class="status-item problems-count" title="Problems"><i class="fa fa-times-circle"></i> 0 <i class="fa fa-exclamation-triangle"></i> 0</span>
+                    <span class="status-item char-count" title="Characters">0 chars</span>
+                    <span class="status-item line-count" title="Lines">0 lines</span>
+                </div>
+            </div>
+        </div>
+        <style>
+            .monaco-wrapper { position: relative; width: 100%; height: ${EDITOR_CONFIG.DEFAULT_HEIGHT}px; border: 1px solid ${COLORS.light}; border-radius: 8px; overflow: hidden; background: ${COLORS.white}; box-shadow: 0 4px 20px rgba(2, 80, 116, 0.1); display: flex; flex-direction: column; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+            .monaco-wrapper:hover { box-shadow: 0 8px 30px rgba(2, 80, 116, 0.15); }
+            .editor-toolbar { background: linear-gradient(135deg, ${COLORS.primary} 0%, ${COLORS.primaryDark} 100%); padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; gap: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); flex-shrink: 0; }
+            .toolbar-section { display: flex; align-items: center; gap: 8px; }
+            .toolbar-left { flex: 1; }
+            .toolbar-center { flex: 0 0 auto; }
+            .toolbar-right { flex: 1; justify-content: flex-end; }
+            .btn-group { display: flex; gap: 4px; }
+            .toolbar-divider { width: 1px; height: 24px; background: rgba(255,255,255,0.2); margin: 0 4px; }
+            .toolbar-btn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); color: ${COLORS.white}; padding: 6px 10px; border-radius: 5px; cursor: pointer; font-size: 12px; display: flex; align-items: center; gap: 5px; transition: all 0.2s ease; }
+            .toolbar-btn:hover { background: rgba(255,255,255,0.2); transform: translateY(-1px); }
+            .toolbar-btn:active { transform: translateY(0); background: rgba(255,255,255,0.25); }
+            .toolbar-btn.primary { background: ${COLORS.accent}; border-color: ${COLORS.accent}; }
+            .toolbar-btn.primary:hover { background: #03D4A8; }
+            .toolbar-btn i { font-size: 13px; }
+            .btn-label { font-weight: 500; }
+            .editor-info { display: flex; gap: 16px; color: rgba(255,255,255,0.85); font-size: 12px; }
+            .info-item { display: flex; align-items: center; gap: 5px; padding: 4px 8px; background: rgba(0,0,0,0.15); border-radius: 4px; }
+            .info-item i { opacity: 0.7; }
+            .quick-settings-bar { background: ${COLORS.lighter}; padding: 8px 12px; display: flex; align-items: center; gap: 20px; border-bottom: 1px solid ${COLORS.light}; flex-wrap: wrap; flex-shrink: 0; }
+            .settings-group { display: flex; align-items: center; gap: 8px; }
+            .setting-label { font-size: 12px; color: ${COLORS.medium}; font-weight: 500; display: flex; align-items: center; gap: 4px; white-space: nowrap; }
+            .setting-label i { color: ${COLORS.primary}; }
+            .setting-select { padding: 5px 10px; border: 1px solid ${COLORS.light}; border-radius: 5px; font-size: 12px; background: ${COLORS.white}; color: ${COLORS.dark}; cursor: pointer; transition: all 0.2s; }
+            .setting-select:focus { outline: none; border-color: ${COLORS.primary}; box-shadow: 0 0 0 2px rgba(2,80,116,0.1); }
+            .setting-range { width: 80px; accent-color: ${COLORS.primary}; }
+            .setting-value { font-size: 12px; color: ${COLORS.dark}; font-weight: 600; min-width: 40px; }
+            .toggles { gap: 6px; }
+            .toggle-btn { display: flex; align-items: center; gap: 4px; padding: 5px 10px; border: 1px solid ${COLORS.light}; border-radius: 5px; font-size: 11px; color: ${COLORS.medium}; background: ${COLORS.white}; cursor: pointer; transition: all 0.2s; }
+            .toggle-btn:hover { border-color: ${COLORS.primary}; color: ${COLORS.primary}; }
+            .toggle-btn.active { background: ${COLORS.primary}; border-color: ${COLORS.primary}; color: ${COLORS.white}; }
+            .toggle-btn input { display: none; }
+            .toggle-btn i { font-size: 12px; }
+            .save-indicator { margin-left: auto; }
+            .save-status { display: flex; align-items: center; gap: 5px; padding: 5px 12px; border-radius: 5px; font-size: 12px; font-weight: 600; }
+            .save-status.saved { background: rgba(16, 185, 129, 0.1); color: ${COLORS.success}; }
+            .save-status.unsaved { background: rgba(239, 68, 68, 0.1); color: ${COLORS.error}; animation: pulse 2s infinite; }
+            @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+            .editor-container { flex: 1; min-height: 0; position: relative; }
+            .status-bar { background: ${COLORS.primaryDark}; padding: 4px 12px; display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: rgba(255,255,255,0.8); flex-shrink: 0; }
+            .status-left, .status-right { display: flex; gap: 12px; }
+            .status-center { flex: 1; text-align: center; }
+            .status-item { display: flex; align-items: center; gap: 4px; padding: 2px 6px; border-radius: 3px; transition: background 0.2s; }
+            .status-item:hover { background: rgba(255,255,255,0.1); }
+            .problems-count i:first-child { color: ${COLORS.error}; }
+            .problems-count i:last-of-type { color: ${COLORS.warning}; }
+            .monaco-wrapper.fullscreen { position: fixed !important; top: 0 !important; left: 0 !important; width: 100vw !important; height: 100vh !important; z-index: 9999 !important; border-radius: 0 !important; }
+            @media (max-width: 768px) { .btn-label { display: none; } .toolbar-center { display: none; } .quick-settings-bar { gap: 10px; } .settings-group { flex-wrap: wrap; } }
+            .toolbar-btn, .toggle-btn, .setting-select { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+        </style>
+    `;
+}
+
+// ==================== LOAD MONACO ====================
+function loadMonaco(callback) {
+    if (window.monaco && window.require) {
+        isMonacoLoaded = true;
+        registerCustomThemes();
+        callback();
+        return;
+    }
+
+    const script = document.createElement('script');
+    script.src = `${EDITOR_CONFIG.MONACO_CDN}/${EDITOR_CONFIG.MONACO_VERSION}/min/vs/loader.min.js`;
+
+    script.onload = function () {
+        window.require.config({
+            paths: { 'vs': `${EDITOR_CONFIG.MONACO_CDN}/${EDITOR_CONFIG.MONACO_VERSION}/min/vs` }
+        });
+
+        window.require(['vs/editor/editor.main'], function () {
+            isMonacoLoaded = true;
+            registerCustomThemes();
+            setupCompletions();
+            callback();
+        });
+    };
+
+    script.onerror = function () {
+        showAlert('Failed to load Monaco Editor', 'error');
+    };
+
+    document.head.appendChild(script);
+}
+
+// ==================== REGISTER CUSTOM THEMES ====================
+function registerCustomThemes() {
+    if (!window.monaco) return;
+    Object.entries(CUSTOM_THEMES).forEach(([name, theme]) => {
+        monaco.editor.defineTheme(name, theme);
+    });
+}
+
+// ==================== GET EDITOR OPTIONS ====================
+function getEditorOptions(code, language) {
+    return {
+        value: code || '',
+        language: language,
+        theme: editorSettings.theme,
+        fontSize: editorSettings.fontSize,
+        tabSize: editorSettings.tabSize,
+        automaticLayout: true,
+        scrollBeyondLastLine: false,
+        padding: { top: 10, bottom: 10 },
+        lineNumbers: editorSettings.lineNumbers ? 'on' : 'off',
+        lineNumbersMinChars: 4,
+        minimap: { enabled: editorSettings.minimap, maxColumn: 80, renderCharacters: true, showSlider: 'mouseover', side: 'right', size: 'proportional' },
+        wordWrap: editorSettings.wordWrap ? 'on' : 'off',
+        wordWrapColumn: 120,
+        wrappingIndent: 'same',
+        insertSpaces: true,
+        detectIndentation: true,
+        autoIndent: editorSettings.autoIndent,
+        bracketPairColorization: { enabled: editorSettings.bracketPairs },
+        guides: { bracketPairs: editorSettings.bracketPairs, indentation: editorSettings.indentGuides, highlightActiveIndentation: true, bracketPairsHorizontal: 'active' },
+        matchBrackets: 'always',
+        renderWhitespace: editorSettings.renderWhitespace,
+        renderControlCharacters: false,
+        renderLineHighlight: editorSettings.renderLineHighlight,
+        rulers: editorSettings.rulers,
+        colorDecorators: editorSettings.colorDecorators,
+        cursorBlinking: editorSettings.cursorBlinking,
+        cursorStyle: editorSettings.cursorStyle,
+        cursorWidth: 2,
+        cursorSmoothCaretAnimation: 'on',
+        smoothScrolling: editorSettings.smoothScrolling,
+        mouseWheelZoom: true,
+        scrollbar: { vertical: 'visible', horizontal: 'visible', verticalScrollbarSize: 12, horizontalScrollbarSize: 12, useShadows: true },
+        formatOnPaste: editorSettings.formatOnPaste,
+        formatOnType: editorSettings.formatOnType,
+        autoClosingBrackets: editorSettings.autoClosingBrackets,
+        autoClosingQuotes: editorSettings.autoClosingQuotes,
+        autoSurround: 'languageDefined',
+        folding: editorSettings.folding,
+        foldingStrategy: 'indentation',
+        foldingHighlight: true,
+        showFoldingControls: editorSettings.showFoldingControls,
+        quickSuggestions: { other: true, comments: false, strings: true },
+        suggestOnTriggerCharacters: true,
+        acceptSuggestionOnEnter: 'smart',
+        tabCompletion: 'on',
+        wordBasedSuggestions: 'matchingDocuments',
+        parameterHints: { enabled: true },
+        inlineSuggest: { enabled: editorSettings.inlineSuggest },
+        links: true,
+        contextmenu: true,
+        copyWithSyntaxHighlighting: true,
+        dragAndDrop: true,
+        multiCursorModifier: 'ctrlCmd',
+        stickyScroll: { enabled: editorSettings.stickyScroll },
+        find: { addExtraSpaceOnTop: false, autoFindInSelection: 'multiline' },
+        hover: { enabled: true, delay: 300, sticky: true }
+    };
+}
+
+// ==================== INITIALIZE EDITOR ====================
+function initEditor(frm) {
+    const wrapper = frm.fields_dict.editor_html.$wrapper;
+    const container = wrapper.find('.editor-container')[0];
+
+    if (!container) {
+        setTimeout(() => initEditor(frm), 500);
+        return;
+    }
+
+    if (!window.monaco) return;
+
+    if (editor) {
+        try { editor.dispose(); editor = null; } catch (e) {}
+    }
+
+    const language = getFileLanguage(frm.doc.file_path);
+
+    try {
+        editor = monaco.editor.create(container, getEditorOptions(frm.doc.my_code, language));
+
+        initializeUI(frm);
+        setupEditorHandlers(frm);
+        setupEditorEvents(frm);
+        setupKeyboardShortcuts(frm);
+
+        editor.onDidChangeModelContent(() => {
+            const content = editor.getValue();
+            frm.doc.my_code = content;
+
+            if (content !== editorState.lastSavedContent) {
+                editorState.isDirty = true;
+                updateSaveStatus(frm, true);
+            }
+            updateEditorInfo(frm);
+        });
+
+        editorState.lastSavedContent = frm.doc.my_code || '';
+
+        setTimeout(() => { if (editor) editor.layout(); }, 100);
+
+        showAlert('Monaco Editor Ready!', 'success');
+
+    } catch (e) {
+        showAlert('Failed to create editor: ' + e.message, 'error');
+    }
+}
+
+// ==================== INITIALIZE UI ====================
+function initializeUI(frm) {
+    const wrapper = frm.fields_dict.editor_html.$wrapper;
+
+    wrapper.find('.select-theme').val(editorSettings.theme);
+    wrapper.find('.input-fontsize').val(editorSettings.fontSize);
+    wrapper.find('.label-fontsize').text(editorSettings.fontSize + 'px');
+    wrapper.find('.select-tabsize').val(editorSettings.tabSize);
+
+    wrapper.find('.toggle-wordwrap').prop('checked', editorSettings.wordWrap);
+    wrapper.find('.toggle-minimap').prop('checked', editorSettings.minimap);
+    wrapper.find('.toggle-linenumbers').prop('checked', editorSettings.lineNumbers);
+
+    wrapper.find('.toggle-btn').each(function () {
+        const input = $(this).find('input');
+        $(this).toggleClass('active', input.is(':checked'));
+    });
+
+    const language = getFileLanguage(frm.doc.file_path);
+    wrapper.find('.lang-name').text(language.charAt(0).toUpperCase() + language.slice(1));
+
+    updateEditorInfo(frm);
+}
+
+// ==================== SETUP EDITOR HANDLERS ====================
+function setupEditorHandlers(frm) {
+    const wrapper = frm.fields_dict.editor_html.$wrapper;
+
+    wrapper.find('.btn-save').off('click').on('click', () => saveFile(frm));
+    wrapper.find('.btn-undo').off('click').on('click', () => editor && editor.trigger('keyboard', 'undo', null));
+    wrapper.find('.btn-redo').off('click').on('click', () => editor && editor.trigger('keyboard', 'redo', null));
+    wrapper.find('.btn-format').off('click').on('click', () => { if (editor) { editor.getAction('editor.action.formatDocument').run(); showAlert('Code Formatted', 'success'); } });
+    wrapper.find('.btn-find').off('click').on('click', () => editor && editor.getAction('actions.find').run());
+    wrapper.find('.btn-replace').off('click').on('click', () => editor && editor.getAction('editor.action.startFindReplaceAction').run());
+    wrapper.find('.btn-comment').off('click').on('click', () => editor && editor.getAction('editor.action.commentLine').run());
+    wrapper.find('.btn-fold-all').off('click').on('click', () => editor && editor.getAction('editor.foldAll').run());
+    wrapper.find('.btn-unfold-all').off('click').on('click', () => editor && editor.getAction('editor.unfoldAll').run());
+    wrapper.find('.btn-fullscreen').off('click').on('click', () => toggleFullscreen(frm));
+    wrapper.find('.btn-settings').off('click').on('click', () => showSettingsDialog(frm));
+    wrapper.find('.btn-keyboard').off('click').on('click', () => showKeyboardShortcuts());
+
+    wrapper.find('.select-theme').off('change').on('change', function () {
+        editorSettings.theme = $(this).val();
+        saveSettings();
+        if (editor) monaco.editor.setTheme(editorSettings.theme);
+    });
+
+    wrapper.find('.input-fontsize').off('input').on('input', function () {
+        editorSettings.fontSize = parseInt($(this).val());
+        saveSettings();
+        wrapper.find('.label-fontsize').text(editorSettings.fontSize + 'px');
+        if (editor) editor.updateOptions({ fontSize: editorSettings.fontSize });
+    });
+
+    wrapper.find('.select-tabsize').off('change').on('change', function () {
+        editorSettings.tabSize = parseInt($(this).val());
+        saveSettings();
+        wrapper.find('.indent-info').text('Spaces: ' + editorSettings.tabSize);
+        if (editor) editor.getModel().updateOptions({ tabSize: editorSettings.tabSize });
+    });
+
+    wrapper.find('.toggle-wordwrap').off('change').on('change', function () {
+        editorSettings.wordWrap = $(this).is(':checked');
+        saveSettings();
+        $(this).closest('.toggle-btn').toggleClass('active', editorSettings.wordWrap);
+        if (editor) editor.updateOptions({ wordWrap: editorSettings.wordWrap ? 'on' : 'off' });
+    });
+
+    wrapper.find('.toggle-minimap').off('change').on('change', function () {
+        editorSettings.minimap = $(this).is(':checked');
+        saveSettings();
+        $(this).closest('.toggle-btn').toggleClass('active', editorSettings.minimap);
+        if (editor) editor.updateOptions({ minimap: { enabled: editorSettings.minimap } });
+    });
+
+    wrapper.find('.toggle-linenumbers').off('change').on('change', function () {
+        editorSettings.lineNumbers = $(this).is(':checked');
+        saveSettings();
+        $(this).closest('.toggle-btn').toggleClass('active', editorSettings.lineNumbers);
+        if (editor) editor.updateOptions({ lineNumbers: editorSettings.lineNumbers ? 'on' : 'off' });
+    });
+}
+
+// ==================== SETUP EDITOR EVENTS ====================
+function setupEditorEvents(frm) {
+    if (!editor) return;
+
+    editor.onDidChangeCursorPosition((e) => {
+        const wrapper = frm.fields_dict.editor_html.$wrapper;
+        wrapper.find('.line-col').text(`Ln ${e.position.lineNumber}, Col ${e.position.column}`);
+    });
+
+    editor.onDidChangeCursorSelection((e) => {
+        const wrapper = frm.fields_dict.editor_html.$wrapper;
+        const selection = editor.getSelection();
+
+        if (selection && !selection.isEmpty()) {
+            const selectedText = editor.getModel().getValueInRange(selection);
+            wrapper.find('.selection-info').show();
+            wrapper.find('.selection-text').text(`${selectedText.length} chars, ${selectedText.split('\n').length} lines`);
+        } else {
+            wrapper.find('.selection-info').hide();
+        }
+    });
+}
+
+// ==================== UPDATE EDITOR INFO ====================
+function updateEditorInfo(frm) {
+    if (!editor) return;
+
+    const wrapper = frm.fields_dict.editor_html.$wrapper;
+    const model = editor.getModel();
+    if (!model) return;
+
+    const content = model.getValue();
+    wrapper.find('.char-count').text(content.length.toLocaleString() + ' chars');
+    wrapper.find('.line-count').text(model.getLineCount().toLocaleString() + ' lines');
+}
+
+// ==================== KEYBOARD SHORTCUTS ====================
+function setupKeyboardShortcuts(frm) {
+    if (!editor) return;
+
+    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => saveFile(frm));
+    editor.addCommand(monaco.KeyMod.Shift | monaco.KeyMod.Alt | monaco.KeyCode.KeyF, () => { editor.getAction('editor.action.formatDocument').run(); showAlert('Code Formatted', 'success'); });
+    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Slash, () => editor.getAction('editor.action.commentLine').run());
+    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyD, () => editor.getAction('editor.action.copyLinesDownAction').run());
+    editor.addCommand(monaco.KeyMod.Alt | monaco.KeyCode.UpArrow, () => editor.getAction('editor.action.moveLinesUpAction').run());
+    editor.addCommand(monaco.KeyMod.Alt | monaco.KeyCode.DownArrow, () => editor.getAction('editor.action.moveLinesDownAction').run());
+    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyK, () => editor.getAction('editor.action.deleteLines').run());
+    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyG, () => editor.getAction('editor.action.gotoLine').run());
+    editor.addCommand(monaco.KeyCode.F11, () => toggleFullscreen(frm));
+}
+
+// ==================== SHOW KEYBOARD SHORTCUTS ====================
+function showKeyboardShortcuts() {
+    const shortcuts = `
+        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;">
+            <style>
+                .shortcut-table { width: 100%; border-collapse: collapse; }
+                .shortcut-table th, .shortcut-table td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #e5e7eb; }
+                .shortcut-table th { background: ${COLORS.lighter}; font-weight: 600; color: ${COLORS.dark}; }
+                .shortcut-table tr:hover { background: ${COLORS.lighter}; }
+                .kbd { background: ${COLORS.light}; padding: 3px 8px; border-radius: 4px; font-family: monospace; font-size: 12px; border: 1px solid #d1d5db; }
+            </style>
+            <table class="shortcut-table">
+                <thead><tr><th>Action</th><th>Shortcut</th></tr></thead>
+                <tbody>
+                    <tr><td>Save File</td><td><span class="kbd">Ctrl</span> + <span class="kbd">S</span></td></tr>
+                    <tr><td>Format Code</td><td><span class="kbd">Shift</span> + <span class="kbd">Alt</span> + <span class="kbd">F</span></td></tr>
+                    <tr><td>Find</td><td><span class="kbd">Ctrl</span> + <span class="kbd">F</span></td></tr>
+                    <tr><td>Replace</td><td><span class="kbd">Ctrl</span> + <span class="kbd">H</span></td></tr>
+                    <tr><td>Toggle Comment</td><td><span class="kbd">Ctrl</span> + <span class="kbd">/</span></td></tr>
+                    <tr><td>Duplicate Line</td><td><span class="kbd">Ctrl</span> + <span class="kbd">Shift</span> + <span class="kbd">D</span></td></tr>
+                    <tr><td>Delete Line</td><td><span class="kbd">Ctrl</span> + <span class="kbd">Shift</span> + <span class="kbd">K</span></td></tr>
+                    <tr><td>Fullscreen</td><td><span class="kbd">F11</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+    `;
+    frappe.msgprint({ title: __('Keyboard Shortcuts'), message: shortcuts, wide: true });
+}
+
+// ==================== SHOW SETTINGS DIALOG ====================
+function showSettingsDialog(frm) {
+    const d = new frappe.ui.Dialog({
+        title: __('Editor Settings'),
+        fields: [
+            { fieldtype: 'Section Break', label: 'Appearance' },
+            { fieldname: 'cursor_style', fieldtype: 'Select', label: 'Cursor Style', options: 'line\nblock\nunderline', default: editorSettings.cursorStyle },
+            { fieldname: 'cursor_blinking', fieldtype: 'Select', label: 'Cursor Animation', options: 'blink\nsmooth\nphase\nexpand\nsolid', default: editorSettings.cursorBlinking },
+            { fieldtype: 'Section Break', label: 'Code Intelligence' },
+            { fieldname: 'bracket_pairs', fieldtype: 'Check', label: 'Bracket Pair Colorization', default: editorSettings.bracketPairs },
+            { fieldname: 'indent_guides', fieldtype: 'Check', label: 'Indentation Guides', default: editorSettings.indentGuides },
+            { fieldname: 'sticky_scroll', fieldtype: 'Check', label: 'Sticky Scroll', default: editorSettings.stickyScroll },
+            { fieldtype: 'Section Break', label: 'Editing' },
+            { fieldname: 'format_on_paste', fieldtype: 'Check', label: 'Format on Paste', default: editorSettings.formatOnPaste },
+            { fieldname: 'format_on_type', fieldtype: 'Check', label: 'Format on Type', default: editorSettings.formatOnType },
+            { fieldname: 'smooth_scrolling', fieldtype: 'Check', label: 'Smooth Scrolling', default: editorSettings.smoothScrolling },
+        ],
+        primary_action_label: __('Apply'),
+        primary_action: function () {
+            const values = d.get_values();
+            editorSettings.cursorStyle = values.cursor_style;
+            editorSettings.cursorBlinking = values.cursor_blinking;
+            editorSettings.bracketPairs = values.bracket_pairs;
+            editorSettings.indentGuides = values.indent_guides;
+            editorSettings.stickyScroll = values.sticky_scroll;
+            editorSettings.formatOnPaste = values.format_on_paste;
+            editorSettings.formatOnType = values.format_on_type;
+            editorSettings.smoothScrolling = values.smooth_scrolling;
+            saveSettings();
+
+            if (editor) {
+                editor.updateOptions({
+                    cursorStyle: editorSettings.cursorStyle,
+                    cursorBlinking: editorSettings.cursorBlinking,
+                    bracketPairColorization: { enabled: editorSettings.bracketPairs },
+                    guides: { bracketPairs: editorSettings.bracketPairs, indentation: editorSettings.indentGuides },
+                    stickyScroll: { enabled: editorSettings.stickyScroll },
+                    formatOnPaste: editorSettings.formatOnPaste,
+                    formatOnType: editorSettings.formatOnType,
+                    smoothScrolling: editorSettings.smoothScrolling
+                });
+            }
+            showAlert('Settings Applied', 'success');
+            d.hide();
+        }
+    });
+    d.show();
+}
+
+// ==================== FULLSCREEN ====================
+function toggleFullscreen(frm) {
+    const wrapper = frm.fields_dict.editor_html.$wrapper;
+    const container = wrapper.find('.monaco-wrapper');
+    const btn = wrapper.find('.btn-fullscreen');
+
+    if (!isFullscreen) {
+        container.addClass('fullscreen');
+        btn.html('<i class="fa fa-compress"></i> <span class="btn-label">Exit</span>');
+        isFullscreen = true;
+        $(document).on('keydown.fullscreen', (e) => { if (e.key === 'Escape') toggleFullscreen(frm); });
+    } else {
+        container.removeClass('fullscreen');
+        btn.html('<i class="fa fa-expand"></i> <span class="btn-label">Fullscreen</span>');
+        isFullscreen = false;
+        $(document).off('keydown.fullscreen');
+    }
+
+    if (editor) setTimeout(() => editor.layout(), 100);
+}
+
+// ==================== UPDATE STATUS ====================
+function updateSaveStatus(frm, isDirty) {
+    const wrapper = frm.fields_dict.editor_html.$wrapper;
+    const status = wrapper.find('.save-status');
+
+    if (isDirty) {
+        status.removeClass('saved').addClass('unsaved').html('<i class="fa fa-circle"></i> Unsaved');
+    } else {
+        status.removeClass('unsaved').addClass('saved').html('<i class="fa fa-check-circle"></i> Saved');
+    }
+}
+
+// ==================== SAVE FILE ====================
+async function saveFile(frm) {
+    if (!editor || !frm.doc.app_name || !frm.doc.file_path) {
+        showAlert('Missing app name or file path', 'warning');
+        return;
+    }
+
+    const content = editor.getValue();
+
+    try {
+        const password = await showPasswordDialog({ action: 'save' });
+
+        const response = await frappe.call({
+            method: `${API_PATH}.write_file_content_with_backup`,
+            args: { app_name: frm.doc.app_name, file_path: frm.doc.file_path, content: content, password: password }
+        });
+
+        if (response.message && response.message.success) {
+            editorState.lastSavedContent = content;
+            editorState.isDirty = false;
+            updateSaveStatus(frm, false);
+            showAlert(response.message.message, 'success');
+        }
+    } catch (error) {
+        if (error !== 'cancelled') console.error("[ERROR] Save failed:", error);
+    }
+}
+
+// ==================== COMPLETIONS ====================
+function setupCompletions() {
+    try {
+        monaco.languages.registerCompletionItemProvider('javascript', {
+            provideCompletionItems: (model, position) => {
+                const word = model.getWordUntilPosition(position);
+                const range = { startLineNumber: position.lineNumber, endLineNumber: position.lineNumber, startColumn: word.startColumn, endColumn: word.endColumn };
+                return {
+                    suggestions: [
+                        { label: 'frappe.call', kind: monaco.languages.CompletionItemKind.Function, insertText: 'frappe.call({\n\tmethod: "${1:method}",\n\targs: { ${2} },\n\tcallback: function(r) {\n\t\t${3}\n\t}\n});', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range: range },
+                        { label: 'frappe.msgprint', kind: monaco.languages.CompletionItemKind.Function, insertText: 'frappe.msgprint(__("${1:message}"));', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range: range },
+                        { label: 'frappe.show_alert', kind: monaco.languages.CompletionItemKind.Function, insertText: 'frappe.show_alert({ message: __("${1}"), indicator: "${2|green,red,orange,blue|}" }, ${3:5});', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range: range },
+                        { label: 'frm.set_value', kind: monaco.languages.CompletionItemKind.Function, insertText: 'frm.set_value("${1:fieldname}", ${2:value});', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range: range },
+                        { label: 'frappe.ui.form.on', kind: monaco.languages.CompletionItemKind.Snippet, insertText: 'frappe.ui.form.on("${1:DocType}", {\n\trefresh: function(frm) {\n\t\t${2}\n\t}\n});', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range: range }
+                    ]
+                };
+            }
+        });
+
+        monaco.languages.registerCompletionItemProvider('python', {
+            provideCompletionItems: (model, position) => {
+                const word = model.getWordUntilPosition(position);
+                const range = { startLineNumber: position.lineNumber, endLineNumber: position.lineNumber, startColumn: word.startColumn, endColumn: word.endColumn };
+                return {
+                    suggestions: [
+                        { label: '@frappe.whitelist()', kind: monaco.languages.CompletionItemKind.Snippet, insertText: '@frappe.whitelist()\ndef ${1:function_name}(${2}):\n\t${3:pass}', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range: range },
+                        { label: 'frappe.get_doc', kind: monaco.languages.CompletionItemKind.Function, insertText: 'frappe.get_doc("${1:DocType}", "${2:name}")', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range: range },
+                        { label: 'frappe.get_all', kind: monaco.languages.CompletionItemKind.Function, insertText: 'frappe.get_all("${1:DocType}", filters={${2}}, fields=["${3:name}"])', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range: range },
+                        { label: 'frappe.throw', kind: monaco.languages.CompletionItemKind.Function, insertText: 'frappe.throw(_("${1:message}"))', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, range: range }
+                    ]
+                };
+            }
+        });
+    } catch (e) {
+        console.error('Error setting up completions:', e);
+    }
+}
+
+// =====================================================
+// File Explorer Functions
+// =====================================================
+
+async function loadFilesList(frm) {
+    const app = frm.doc.app_name;
+    const path = frm.doc.target_path || "";
+
+    if (!app) return;
+
+    showAlert('Loading files...', 'info');
+
+    try {
+        const res = await frappe.call({
+            method: `${API_PATH}.list_app_folder_files`,
+            args: { app_name: app, path },
+        });
+
+        const files = res.message || [];
+        const breadcrumbs = buildBreadcrumbs(path);
+
+        const getFileIcon = (fileName, isDir, isBackupFolder) => {
+            if (isBackupFolder) return '💾';
+            if (isDir) return '📁';
+            const ext = fileName.split('.').pop().toLowerCase();
+            const iconMap = { 'py': '🐍', 'js': '📜', 'json': '📋', 'html': '🌐', 'css': '🎨', 'md': '📝', 'txt': '📄' };
+            return iconMap[ext] || '📄';
+        };
+
+        files.sort((a, b) => {
+            if (a.is_dir && !b.is_dir) return -1;
+            if (!a.is_dir && b.is_dir) return 1;
+            return a.name.localeCompare(b.name);
+        });
+
+        const html = `
+            <style>
+                .file-explorer-container { background: linear-gradient(135deg, #0D1B2A 0%, #1B3A4B 100%); border-radius: 12px; overflow: hidden; box-shadow: 0 8px 32px rgba(2, 80, 116, 0.3); }
+                .file-explorer-header { background: linear-gradient(135deg, ${COLORS.primary} 0%, ${COLORS.primaryDark} 100%); padding: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+                .breadcrumb { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; font-size: 13px; color: rgba(255,255,255,0.85); flex-wrap: wrap; }
+                .breadcrumb-item { cursor: pointer; padding: 6px 12px; border-radius: 6px; transition: all 0.2s; color: ${COLORS.accent}; background: rgba(255,255,255,0.1); }
+                .breadcrumb-item:hover { background: rgba(2, 195, 154, 0.3); color: #ffffff; }
+                .breadcrumb-separator { color: rgba(255,255,255,0.4); }
+                .file-search-box { width: 100%; padding: 12px 16px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; color: #ffffff; font-size: 14px; outline: none; }
+                .file-search-box:focus { border-color: ${COLORS.accent}; box-shadow: 0 0 0 3px rgba(2, 195, 154, 0.2); }
+                .file-explorer-body { max-height: 450px; overflow-y: auto; background: #0D1B2A; }
+                .file-list { list-style: none; padding: 12px; margin: 0; }
+                .file-item { display: flex; align-items: center; padding: 12px 16px; cursor: pointer; border-radius: 8px; transition: all 0.2s; margin-bottom: 4px; gap: 12px; border: 1px solid transparent; }
+                .file-item:hover { background: rgba(2, 195, 154, 0.1); border-color: rgba(2, 195, 154, 0.3); transform: translateX(4px); }
+                .file-item.selected { background: linear-gradient(135deg, ${COLORS.primary} 0%, ${COLORS.primaryDark} 100%); border-color: ${COLORS.accent}; }
+                .file-item.is-directory .file-name { color: ${COLORS.accent}; font-weight: 600; }
+                .file-icon { font-size: 20px; min-width: 28px; text-align: center; }
+                .file-name { flex: 1; font-size: 14px; color: #E0E0E0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+                .file-size { font-size: 12px; color: rgba(255,255,255,0.5); min-width: 70px; text-align: right; }
+                .file-explorer-footer { background: linear-gradient(135deg, ${COLORS.primaryDark} 0%, #011627 100%); padding: 12px 16px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; font-size: 12px; color: rgba(255,255,255,0.6); }
+                .empty-state { text-align: center; padding: 60px 20px; color: rgba(255,255,255,0.5); }
+            </style>
+            <div class="file-explorer-container">
+                <div class="file-explorer-header">
+                    <div class="breadcrumb">${breadcrumbs}</div>
+                    <input type="text" class="file-search-box" id="file-search-input" placeholder="🔍 ${__('Search files...')}">
+                </div>
+                <div class="file-explorer-body">
+                    ${files.length > 0 ? `
+                        <ul class="file-list">
+                            ${files.map(f => `
+                                <li class="file-item ${f.is_dir ? 'is-directory' : 'is-file'}" data-path="${f.path}" data-is-file="${f.is_file}" data-is-dir="${f.is_dir}" data-name="${f.name.toLowerCase()}">
+                                    <span class="file-icon">${getFileIcon(f.name, f.is_dir, f.is_backup_folder)}</span>
+                                    <span class="file-name">${f.name}</span>
+                                    ${!f.is_dir ? `<span class="file-size">${formatFileSize(f.size)}</span>` : ''}
+                                </li>
+                            `).join('')}
+                        </ul>
+                    ` : `<div class="empty-state"><div style="font-size: 56px;">📂</div><div>${__('No files found')}</div></div>`}
+                </div>
+                <div class="file-explorer-footer">
+                    <span>📊 ${files.length} ${__('items')}</span>
+                    <span>📂 ${path || '/'}</span>
+                </div>
+            </div>
+        `;
+
+        frm.set_df_property("files_list_html", "options", html);
+        frm.refresh_field("files_list_html");
+
+        setTimeout(() => {
+            const wrapper = frm.fields_dict.files_list_html.$wrapper;
+
+            wrapper.find(".file-item").on("click", function () {
+                const path = $(this).data("path");
+                const is_file = $(this).data("is-file");
+
+                wrapper.find(".file-item").removeClass("selected");
+                $(this).addClass("selected");
+
+                if (!is_file) {
+                    frm.set_value("target_path", path);
+                    return;
+                }
+
+                frm.set_value("file_path", path);
+                loadFileContent(frm, path);
+            });
+
+            wrapper.find(".breadcrumb-item").on("click", function () {
+                frm.set_value("target_path", $(this).data("path"));
+            });
+
+            wrapper.find("#file-search-input").on("input", function () {
+                const query = $(this).val().toLowerCase();
+                wrapper.find(".file-item").each(function () {
+                    $(this).toggle($(this).data("name").includes(query));
+                });
+            });
+        }, 100);
+    } catch (error) {
+        console.error("[ERROR] Failed to load files:", error);
+        showAlert('Failed to load files - access denied', 'error');
+    }
+}
+
+function buildBreadcrumbs(path) {
+    if (!path) return '<span class="breadcrumb-item" data-path="">🏠 Root</span>';
+    const parts = path.split('/').filter(p => p);
+    let breadcrumbs = '<span class="breadcrumb-item" data-path="">🏠 Root</span>';
+    let currentPath = '';
+    parts.forEach(part => {
+        currentPath += (currentPath ? '/' : '') + part;
+        breadcrumbs += `<span class="breadcrumb-separator">›</span><span class="breadcrumb-item" data-path="${currentPath}">${part}</span>`;
+    });
+    return breadcrumbs;
+}
+
+function formatFileSize(bytes) {
+    if (!bytes) return '';
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+}
+
+async function loadFileContent(frm, file_path) {
+    const app = frm.doc.app_name;
+    if (!app || !file_path) return;
+
+    showAlert(`Loading ${file_path.split('/').pop()}...`, 'info');
+
+    try {
+        const res = await frappe.call({
+            method: `${API_PATH}.read_file_content`,
+            args: { app_name: app, file_path }
+        });
+
+        frm.set_value("my_code", res.message || "");
+        showAlert('File loaded successfully!', 'success');
+
+        if (!isMonacoLoaded) {
+            loadMonaco(() => setTimeout(() => initEditor(frm), 300));
+        } else {
+            setTimeout(() => initEditor(frm), 100);
+        }
+    } catch (error) {
+        console.error("[ERROR]", error);
+        showAlert('Error loading file', 'error');
+    }
+}
+
+// =====================================================
+// Dialog Functions
+// =====================================================
+
+function showCreateFileDialog(frm) {
+    if (!frm.doc.app_name) { showAlert('Please select an app first', 'warning'); return; }
+    if (!userPermissions.can_create) { showAlert('You don\'t have permission to create files', 'error'); return; }
+
+    const dialog = new frappe.ui.Dialog({
+        title: __('Create New File'),
+        size: 'small',
+        fields: [
+            { label: __('File Name'), fieldname: 'file_name', fieldtype: 'Data', reqd: 1, placeholder: __('example.py') },
+            { fieldtype: 'Section Break' },
+            { label: __('Current Folder'), fieldname: 'current_folder', fieldtype: 'Data', read_only: 1, default: frm.doc.target_path || '/' },
+            { fieldtype: 'Section Break', label: __('Confirmation') },
+            { label: __('Type "save_and_edit" to confirm'), fieldname: 'password', fieldtype: 'Data', reqd: 1, placeholder: 'save_and_edit' }
+        ],
+        primary_action_label: __('Create File'),
+        primary_action: async (values) => {
+            dialog.disable_primary_action();
+            try {
+                const res = await frappe.call({
+                    method: `${API_PATH}.create_new_file`,
+                    args: { app_name: frm.doc.app_name, folder_path: frm.doc.target_path || '', file_name: values.file_name, password: values.password }
+                });
+                if (res.message?.success) {
+                    showAlert(res.message.message, 'success');
+                    dialog.hide();
+                    await loadFilesList(frm);
+                    frm.set_value('file_path', res.message.file_path);
+                    loadFileContent(frm, res.message.file_path);
+                }
+            } catch (error) { console.error('[ERROR]', error); }
+            finally { dialog.enable_primary_action(); }
+        }
+    });
+    dialog.show();
+}
+
+function showCreateFolderDialog(frm) {
+    if (!frm.doc.app_name) { showAlert('Please select an app first', 'warning'); return; }
+    if (!userPermissions.can_create) { showAlert('You don\'t have permission to create folders', 'error'); return; }
+
+    const dialog = new frappe.ui.Dialog({
+        title: __('Create New Folder'),
+        size: 'small',
+        fields: [
+            { label: __('Folder Name'), fieldname: 'folder_name', fieldtype: 'Data', reqd: 1, placeholder: __('my_folder') },
+            { fieldtype: 'Section Break' },
+            { label: __('Parent Folder'), fieldname: 'parent_folder', fieldtype: 'Data', read_only: 1, default: frm.doc.target_path || '/' },
+            { fieldtype: 'Section Break', label: __('Confirmation') },
+            { label: __('Type "save_and_edit" to confirm'), fieldname: 'password', fieldtype: 'Data', reqd: 1, placeholder: 'save_and_edit' }
+        ],
+        primary_action_label: __('Create Folder'),
+        primary_action: async (values) => {
+            dialog.disable_primary_action();
+            try {
+                const res = await frappe.call({
+                    method: `${API_PATH}.create_new_folder`,
+                    args: { app_name: frm.doc.app_name, parent_path: frm.doc.target_path || '', folder_name: values.folder_name, password: values.password }
+                });
+                if (res.message?.success) {
+                    showAlert(res.message.message, 'success');
+                    dialog.hide();
+                    await loadFilesList(frm);
+                }
+            } catch (error) { console.error('[ERROR]', error); }
+            finally { dialog.enable_primary_action(); }
+        }
+    });
+    dialog.show();
+}
+
+function showDeleteFileDialog(frm) {
+    if (!frm.doc.file_path) { showAlert('Please select a file first', 'warning'); return; }
+    if (!userPermissions.can_delete) { showAlert('You don\'t have permission to delete files', 'error'); return; }
+
+    const fileName = frm.doc.file_path.split('/').pop();
+
+    const dialog = new frappe.ui.Dialog({
+        title: __('Delete File'),
+        size: 'small',
+        fields: [
+            { fieldtype: 'HTML', options: `<div style="text-align: center;"><div style="font-size: 48px;">🗑️</div><div style="color: #666;">${__('Delete:')} <strong style="color: ${COLORS.error};">${fileName}</strong></div></div>` },
+            { fieldtype: 'Section Break', label: __('Confirmation') },
+            { label: __('Type "sure_delete" to confirm'), fieldname: 'password', fieldtype: 'Data', reqd: 1, placeholder: 'sure_delete' }
+        ],
+        primary_action_label: __('Delete'),
+        primary_action: async (values) => {
+            dialog.disable_primary_action();
+            try {
+                const res = await frappe.call({
+                    method: `${API_PATH}.delete_file`,
+                    args: { app_name: frm.doc.app_name, file_path: frm.doc.file_path, password: values.password }
+                });
+                if (res.message?.success) {
+                    showAlert(res.message.message, 'success');
+                    dialog.hide();
+                    frm.set_value('file_path', '');
+                    frm.set_value('my_code', '');
+                    if (editor) editor.setValue('');
+                    await loadFilesList(frm);
+                }
+            } catch (error) { console.error('[ERROR]', error); }
+            finally { dialog.enable_primary_action(); }
+        }
+    });
+    dialog.show();
+}
+
+function showRenameDialog(frm) {
+    if (!frm.doc.file_path) { showAlert('Please select a file first', 'warning'); return; }
+
+    const currentName = frm.doc.file_path.split('/').pop();
+
+    const dialog = new frappe.ui.Dialog({
+        title: __('Rename File'),
+        size: 'small',
+        fields: [
+            { label: __('Current Name'), fieldname: 'current_name', fieldtype: 'Data', read_only: 1, default: currentName },
+            { label: __('New Name'), fieldname: 'new_name', fieldtype: 'Data', reqd: 1, default: currentName },
+            { fieldtype: 'Section Break', label: __('Confirmation') },
+            { label: __('Type "save_and_edit" to confirm'), fieldname: 'password', fieldtype: 'Data', reqd: 1, placeholder: 'save_and_edit' }
+        ],
+        primary_action_label: __('Rename'),
+        primary_action: async (values) => {
+            dialog.disable_primary_action();
+            try {
+                const res = await frappe.call({
+                    method: `${API_PATH}.rename_item`,
+                    args: { app_name: frm.doc.app_name, old_path: frm.doc.file_path, new_name: values.new_name, password: values.password }
+                });
+                if (res.message?.success) {
+                    showAlert(res.message.message, 'success');
+                    dialog.hide();
+                    frm.set_value('file_path', res.message.new_path);
+                    await loadFilesList(frm);
+                }
+            } catch (error) { console.error('[ERROR]', error); }
+            finally { dialog.enable_primary_action(); }
+        }
+    });
+    dialog.show();
+}
+
+async function showBackupsDialog(frm) {
+    if (!frm.doc.file_path) { showAlert('Please select a file first', 'warning'); return; }
+
+    try {
+        const res = await frappe.call({
+            method: `${API_PATH}.list_file_backups`,
+            args: { app_name: frm.doc.app_name, file_path: frm.doc.file_path }
+        });
+
+        const backups = res.message || [];
+        const fileName = frm.doc.file_path.split('/').pop();
+
+        let backupsHTML = backups.length === 0
+            ? `<div style="text-align: center; padding: 40px;"><div style="font-size: 48px;">📁</div><div>${__('No backups found')}</div></div>`
+            : `<table class="table table-bordered"><thead><tr><th>${__('Timestamp')}</th><th>${__('Size')}</th><th>${__('Actions')}</th></tr></thead><tbody>
+                ${backups.map(b => `<tr><td>${b.timestamp}</td><td>${b.size_formatted}</td><td>
+                    <button class="btn btn-xs btn-default btn-view-backup" data-filename="${b.filename}">👁️ ${__('View')}</button>
+                    <button class="btn btn-xs btn-primary btn-restore-backup" data-filename="${b.filename}" style="background: ${COLORS.primary};">↩️ ${__('Restore')}</button>
+                </td></tr>`).join('')}
+            </tbody></table>`;
+
+        const dialog = new frappe.ui.Dialog({
+            title: __('Backups: ') + fileName,
+            size: 'large',
+            fields: [{ fieldtype: 'HTML', fieldname: 'backups_list', options: backupsHTML }],
+            primary_action_label: __('Close'),
+            primary_action: () => dialog.hide()
+        });
+
+        dialog.show();
+
+        dialog.$wrapper.find('.btn-view-backup').on('click', async function () {
+            const content = await frappe.call({
+                method: `${API_PATH}.read_backup_content`,
+                args: { app_name: frm.doc.app_name, file_path: frm.doc.file_path, backup_filename: $(this).data('filename') }
+            });
+            const viewDialog = new frappe.ui.Dialog({
+                title: __('Backup: ') + $(this).data('filename'),
+                size: 'extra-large',
+                fields: [{ fieldtype: 'Code', fieldname: 'content', options: getFileLanguage(frm.doc.file_path), default: content.message, read_only: 1 }],
+                primary_action_label: __('Close'),
+                primary_action: () => viewDialog.hide()
+            });
+            viewDialog.show();
+        });
+
+        dialog.$wrapper.find('.btn-restore-backup').on('click', async function () {
+            try {
+                const password = await showPasswordDialog({ action: 'save' });
+                const res = await frappe.call({
+                    method: `${API_PATH}.restore_backup`,
+                    args: { app_name: frm.doc.app_name, file_path: frm.doc.file_path, backup_filename: $(this).data('filename'), password: password }
+                });
+                if (res.message?.success) {
+                    showAlert(res.message.message, 'success');
+                    dialog.hide();
+                    await loadFileContent(frm, frm.doc.file_path);
+                }
+            } catch (error) { if (error !== 'cancelled') console.error('[ERROR]', error); }
+        });
+    } catch (error) { console.error('[ERROR]', error); }
+}
+
+// =====================================================
+// Custom Buttons
+// =====================================================
+
+function addCustomButtons(frm) {
+    frm.clear_custom_buttons();
+
+    if (userPermissions.can_create) {
+        frm.add_custom_button(__("New File"), () => showCreateFileDialog(frm), __("Create"));
+        frm.add_custom_button(__("New Folder"), () => showCreateFolderDialog(frm), __("Create"));
+    }
+
+    if (frm.doc.file_path) {
+        if (userPermissions.can_delete) {
+            frm.add_custom_button(__("Delete File"), () => showDeleteFileDialog(frm), __("Actions"));
+        }
+        frm.add_custom_button(__("Rename"), () => showRenameDialog(frm), __("Actions"));
+        frm.add_custom_button(__("View Backups"), () => showBackupsDialog(frm), __("Actions"));
+    }
+}
+
+// ==================== MAIN FORM SCRIPT ====================
+frappe.ui.form.on('Forty Studio', {
+    before_load: function(frm) {
+        // Load apps before form renders
+        loadAppsOptions();
+    },
+
+    setup: function(frm) {
+        // Set app_name field options on meta
+        if (APPS_OPTIONS) {
+            frappe.meta.get_docfield('Forty Studio', 'app_name').options = APPS_OPTIONS;
+        }
+    },
+
+    onload: async function (frm) {
+        console.log('Forty Studio: Form loading...');
+
+        // Load user permissions first
+        await loadUserPermissions();
+
+        // Set app options on the field
+        setAppFieldOptions(frm);
+    },
+
+    refresh: function (frm) {
+        console.log('Forty Studio: Refresh');
+
+        // Set app options
+        setAppFieldOptions(frm);
+
+        // Add custom buttons based on permissions
+        addCustomButtons(frm);
+
+        // Create editor HTML
+        if (frm.fields_dict.editor_html) {
+            frm.fields_dict.editor_html.$wrapper.html(createEditorHTML());
+        }
+
+        if (frm.doc.app_name) {
+            loadFilesList(frm);
+        }
+
+        if (frm.doc.my_code) {
+            if (!isMonacoLoaded) {
+                loadMonaco(() => setTimeout(() => initEditor(frm), 300));
+            } else if (!editor) {
+                setTimeout(() => initEditor(frm), 200);
+            }
+        }
+    },
+
+    app_name: function (frm) {
+        frm.set_value('target_path', '');
+        frm.set_value('file_path', '');
+        frm.set_value('my_code', '');
+        if (editor) editor.setValue('');
+        loadFilesList(frm);
+    },
+
+    target_path: function (frm) {
+        loadFilesList(frm);
+    },
+
+    file_path: function (frm) {
+        if (frm.doc.file_path && isMonacoLoaded && editor) {
+            const language = getFileLanguage(frm.doc.file_path);
+            const model = editor.getModel();
+            if (model) {
+                monaco.editor.setModelLanguage(model, language);
+                frm.fields_dict.editor_html.$wrapper.find('.lang-name').text(language.charAt(0).toUpperCase() + language.slice(1));
+            }
+        }
+        addCustomButtons(frm);
+    }
+});
+
+// ==================== CLEANUP ====================
+window.addEventListener('beforeunload', () => {
+    if (editor) {
+        try { editor.dispose(); } catch (e) {}
+    }
+});
+
+console.log('✓ Forty Studio with Permissions Loaded v3.0.0 - Capital Project');

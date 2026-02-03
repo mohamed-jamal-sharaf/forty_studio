@@ -1,0 +1,36 @@
+# -*- coding: utf-8 -*-
+# Copyright (c) 2024, Capital Project
+
+import frappe
+from frappe import _
+from frappe.model.document import Document
+
+
+class FortyStudioPermissions(Document):
+    def validate(self):
+        self.validate_duplicates()
+
+    def validate_duplicates(self):
+        if not self.list_of_applications_by_role:
+            return
+
+        seen = set()
+        for row in self.list_of_applications_by_role:
+            key = (row.application_name, row.role)
+            if key in seen:
+                frappe.throw(
+                    _("Duplicate entry: {0} - {1}").format(row.application_name, row.role)
+                )
+            seen.add(key)
+
+
+@frappe.whitelist()
+def get_apps_for_select():
+    """Get all installed apps for the Select field"""
+    try:
+        # Use Frappe's built-in function to get installed apps
+        apps = frappe.get_installed_apps()
+        return "\n".join(sorted(apps))
+    except Exception as e:
+        frappe.log_error(f"Error getting apps: {str(e)}")
+        return ""

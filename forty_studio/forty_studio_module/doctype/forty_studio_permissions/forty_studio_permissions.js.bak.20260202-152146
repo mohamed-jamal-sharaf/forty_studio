@@ -1,0 +1,33 @@
+// Forty Studio Permissions
+// Sets application_name Select options dynamically
+
+frappe.ui.form.on('Forty Studio Permissions', {
+    setup: function(frm) {
+        // Load apps and set options on the child table Select field
+        frappe.call({
+            method: 'forty_studio.forty_studio_module.doctype.forty_studio_permissions.forty_studio_permissions.get_apps_for_select',
+            async: false,
+            callback: function(r) {
+                if (r.message) {
+                    // Set options on the child doctype's field
+                    frappe.meta.get_docfield(
+                        'List Of Applications By Role',
+                        'application_name'
+                    ).options = r.message;
+                }
+            }
+        });
+    },
+
+    refresh: function(frm) {
+        frm.set_intro(`
+            <div style="padding: 12px; background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); border-radius: 8px; border-left: 4px solid #1565c0;">
+                <h4 style="margin: 0 0 8px 0; color: #1565c0;">📋 Forty Studio Permissions</h4>
+                <p style="margin: 4px 0; color: #333;"><strong>• Applications By Role:</strong> Which apps each role can access</p>
+                <p style="margin: 4px 0; color: #333;"><strong>• Create Permission:</strong> Roles that can create files/folders</p>
+                <p style="margin: 4px 0; color: #333;"><strong>• Delete Permission:</strong> Roles that can delete files/folders</p>
+                <p style="margin: 8px 0 0; color: #666; font-size: 12px;"><em>System Manager and Administrator always have full access.</em></p>
+            </div>
+        `);
+    }
+});
