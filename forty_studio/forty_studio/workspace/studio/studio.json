@@ -1,7 +1,12 @@
 {
  "app": "Forty Studio",
- "charts": [],
- "content": "[{\"id\":\"53JVzm87Lb\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h3\\\">Forty Studio Workspace</span>\",\"col\":12}},{\"id\":\"tV0ycguUgD\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"jhyoXQhaaK\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"+ Add Code Archive\",\"col\":4}},{\"id\":\"FaTHY1byL3\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Forty Studio { Professional Code Editor }\",\"col\":4}},{\"id\":\"0tpUIYbcsK\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Forty Studio Permissions\",\"col\":4}},{\"id\":\"kRqz_tBaHX\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"qWPKtUd8-j\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Code Archive List\",\"col\":4}},{\"id\":\"2108XsJkyh\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"DocType List\",\"col\":4}},{\"id\":\"bGom9TkgP6\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Module List\",\"col\":4}}]",
+ "charts": [
+  {
+   "chart_name": "DocType Chart",
+   "label": "DocType Chart"
+  }
+ ],
+ "content": "[{\"id\":\"53JVzm87Lb\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h3\\\">Forty Studio Workspace</span>\",\"col\":12}},{\"id\":\"tV0ycguUgD\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"jhyoXQhaaK\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"+ Add Code Archive\",\"col\":4}},{\"id\":\"FaTHY1byL3\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Forty Studio { Professional Code Editor }\",\"col\":4}},{\"id\":\"0tpUIYbcsK\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Forty Studio Permissions\",\"col\":4}},{\"id\":\"kRqz_tBaHX\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"qWPKtUd8-j\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Code Archive List\",\"col\":4}},{\"id\":\"2108XsJkyh\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"DocType List\",\"col\":4}},{\"id\":\"bGom9TkgP6\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Module List\",\"col\":4}},{\"id\":\"ossHiegB49\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"Xc9svYuxsP\",\"type\":\"chart\",\"data\":{\"chart_name\":\"DocType Chart\",\"col\":12}}]",
  "creation": "2026-02-02 00:32:47.772099",
  "custom_blocks": [],
  "docstatus": 0,
@@ -15,7 +20,7 @@
  "label": "Studio",
  "link_type": "DocType",
  "links": [],
- "modified": "2026-02-03 12:40:55.725234",
+ "modified": "2026-02-03 12:42:47.445875",
  "modified_by": "Administrator",
  "module": "Forty Studio",
  "name": "Studio",
