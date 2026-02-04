@@ -21,7 +21,9 @@
   "code_analysis",
   "documentation_tab",
   "documentation",
-  "more_documentations"
+  "more_documentations",
+  "help_tab",
+  "frappe_help"
  ],
  "fields": [
   {
@@ -114,12 +116,22 @@
    "fieldname": "documentation",
    "fieldtype": "Attach",
    "label": "Documentation"
+  },
+  {
+   "fieldname": "help_tab",
+   "fieldtype": "Tab Break",
+   "label": "Help"
+  },
+  {
+   "fieldname": "frappe_help",
+   "fieldtype": "HTML",
+   "label": "Frappe Help"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-02-04 15:03:17.389849",
+ "modified": "2026-02-04 15:03:44.964323",
  "modified_by": "Administrator",
  "module": "Forty Studio Module",
  "name": "Code Editor",
