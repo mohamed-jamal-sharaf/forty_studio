@@ -152,8 +152,7 @@
    "in_list_view": 1,
    "in_preview": 1,
    "in_standard_filter": 1,
-   "label": "Version",
-   "read_only": 1
+   "label": "Version"
   },
   {
    "fieldname": "section_break_wgya",
@@ -179,7 +178,7 @@
  "hide_toolbar": 1,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-02-04 15:16:51.226965",
+ "modified": "2026-02-04 15:21:31.173924",
  "modified_by": "Administrator",
  "module": "Forty Studio Module",
  "name": "Code Editor",
