@@ -18,7 +18,9 @@
   "code_editor_tab",
   "code_editor",
   "code_analysis_tab",
-  "code_analysis"
+  "code_analysis",
+  "documentation_tab",
+  "more_documentations"
  ],
  "fields": [
   {
@@ -93,12 +95,23 @@
    "fieldname": "code_analysis",
    "fieldtype": "HTML",
    "label": "Code Analysis  "
+  },
+  {
+   "fieldname": "documentation_tab",
+   "fieldtype": "Tab Break",
+   "label": "Documentation"
+  },
+  {
+   "fieldname": "more_documentations",
+   "fieldtype": "Table",
+   "label": "More Documentations",
+   "options": "Forty Studio Documentation"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-02-04 15:01:52.193083",
+ "modified": "2026-02-04 15:02:27.815387",
  "modified_by": "Administrator",
  "module": "Forty Studio Module",
  "name": "Code Editor",
