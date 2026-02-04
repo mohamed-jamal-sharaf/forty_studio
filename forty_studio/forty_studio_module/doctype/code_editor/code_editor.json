@@ -75,8 +75,7 @@
   },
   {
    "fieldname": "code_editor",
-   "fieldtype": "HTML",
-   "label": "code_editor"
+   "fieldtype": "HTML"
   },
   {
    "fieldname": "code_editor_tab",
@@ -87,7 +86,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-02-04 15:00:13.533670",
+ "modified": "2026-02-04 15:01:19.977504",
  "modified_by": "Administrator",
  "module": "Forty Studio Module",
  "name": "Code Editor",
