@@ -43,14 +43,14 @@
   {
    "fieldname": "code_type",
    "fieldtype": "Select",
-   "label": "code_type",
+   "label": "Code Type",
    "reqd": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-02-04 14:55:14.531299",
+ "modified": "2026-02-04 14:55:36.112363",
  "modified_by": "Administrator",
  "module": "Forty Studio Module",
  "name": "Code Editor",
