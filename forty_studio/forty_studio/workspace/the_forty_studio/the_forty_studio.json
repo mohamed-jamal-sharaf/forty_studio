@@ -12,13 +12,13 @@
  "idx": 0,
  "indicator_color": "green",
  "is_hidden": 0,
- "label": "Forty Studio",
+ "label": "The Forty Studio",
  "link_type": "DocType",
  "links": [],
- "modified": "2026-02-04 17:09:30.943437",
+ "modified": "2026-02-04 17:10:10.016941",
  "modified_by": "Administrator",
  "module": "Forty Studio",
- "name": "Forty Studio",
+ "name": "The Forty Studio",
  "number_cards": [],
  "owner": "Administrator",
  "parent_page": "",
@@ -43,6 +43,6 @@
    "type": "DocType"
   }
  ],
- "title": "Forty Studio",
+ "title": "The Forty Studio",
  "type": "Workspace"
 }
