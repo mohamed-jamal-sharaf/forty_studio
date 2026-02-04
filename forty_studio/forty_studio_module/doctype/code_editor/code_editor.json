@@ -13,6 +13,7 @@
   "column_break_bdxu",
   "doctype_name",
   "description",
+  "code_version",
   "section_break_okfo",
   "code",
   "code_editor_tab",
@@ -139,12 +140,17 @@
   {
    "fieldname": "frappe_help",
    "fieldtype": "HTML"
+  },
+  {
+   "fieldname": "code_version",
+   "fieldtype": "Data",
+   "label": "Version"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-02-04 15:07:14.435016",
+ "modified": "2026-02-04 15:07:35.407394",
  "modified_by": "Administrator",
  "module": "Forty Studio Module",
  "name": "Code Editor",
