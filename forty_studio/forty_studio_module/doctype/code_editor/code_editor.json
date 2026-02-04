@@ -32,7 +32,8 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "ID",
-   "read_only": 1
+   "read_only": 1,
+   "reqd": 1
   },
   {
    "fieldname": "section_break_ffik",
@@ -130,7 +131,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-02-04 15:03:53.788766",
+ "modified": "2026-02-04 15:04:05.269515",
  "modified_by": "Administrator",
  "module": "Forty Studio Module",
  "name": "Code Editor",
