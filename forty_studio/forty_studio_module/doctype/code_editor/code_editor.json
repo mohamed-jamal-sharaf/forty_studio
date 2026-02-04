@@ -30,10 +30,10 @@
    "default": "COD-.DD.-.MM.-.YY.-",
    "fieldname": "naming_series",
    "fieldtype": "Data",
+   "hidden": 1,
    "in_list_view": 1,
    "label": "ID",
-   "read_only": 1,
-   "reqd": 1
+   "read_only": 1
   },
   {
    "fieldname": "section_break_ffik",
@@ -132,7 +132,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-02-04 15:04:39.978180",
+ "modified": "2026-02-04 15:05:32.696479",
  "modified_by": "Administrator",
  "module": "Forty Studio Module",
  "name": "Code Editor",
