@@ -20,6 +20,7 @@
   "code_analysis_tab",
   "code_analysis",
   "documentation_tab",
+  "documentation",
   "more_documentations"
  ],
  "fields": [
@@ -106,12 +107,17 @@
    "fieldtype": "Table",
    "label": "More Documentations",
    "options": "Forty Studio Documentation"
+  },
+  {
+   "fieldname": "documentation",
+   "fieldtype": "Attach",
+   "label": "Documentation"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-02-04 15:02:27.815387",
+ "modified": "2026-02-04 15:02:48.613997",
  "modified_by": "Administrator",
  "module": "Forty Studio Module",
  "name": "Code Editor",
