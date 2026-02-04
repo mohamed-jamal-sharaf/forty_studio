@@ -1,7 +1,7 @@
 {
  "app": "Forty Studio",
  "charts": [],
- "content": "[{\"id\":\"53JVzm87Lb\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h3\\\">Forty Studio Workspace</span>\",\"col\":12}},{\"id\":\"tV0ycguUgD\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"FaTHY1byL3\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Forty Studio <br><br> Professional Code Editor \",\"col\":4}},{\"id\":\"RFC1OD2NVo\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Code Editor\",\"col\":4}},{\"id\":\"0tpUIYbcsK\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Forty Studio Permissions\",\"col\":4}},{\"id\":\"kRqz_tBaHX\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"qWPKtUd8-j\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Code Archive List\",\"col\":4}},{\"id\":\"2108XsJkyh\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"DocType List\",\"col\":4}},{\"id\":\"bGom9TkgP6\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Module List\",\"col\":4}},{\"id\":\"ossHiegB49\",\"type\":\"spacer\",\"data\":{\"col\":12}}]",
+ "content": "[{\"id\":\"53JVzm87Lb\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h3\\\">Forty Studio Workspace</span>\",\"col\":12}},{\"id\":\"tV0ycguUgD\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"FaTHY1byL3\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Forty Studio <br><br> Professional Code Editor \",\"col\":4}},{\"id\":\"RFC1OD2NVo\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Code Editor\",\"col\":4}},{\"id\":\"0tpUIYbcsK\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Forty Studio Permissions\",\"col\":4}},{\"id\":\"kRqz_tBaHX\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"qWPKtUd8-j\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Code Editor List\",\"col\":4}},{\"id\":\"2108XsJkyh\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"DocType List\",\"col\":4}},{\"id\":\"bGom9TkgP6\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Module List\",\"col\":4}},{\"id\":\"ossHiegB49\",\"type\":\"spacer\",\"data\":{\"col\":12}}]",
  "creation": "2026-02-02 00:32:47.772099",
  "custom_blocks": [],
  "docstatus": 0,
@@ -15,7 +15,7 @@
  "label": "Studio",
  "link_type": "DocType",
  "links": [],
- "modified": "2026-02-04 15:42:24.233340",
+ "modified": "2026-02-04 15:43:05.561412",
  "modified_by": "Administrator",
  "module": "Forty Studio",
  "name": "Studio",
@@ -25,8 +25,8 @@
  "public": 1,
  "quick_lists": [
   {
-   "document_type": "Code Archive",
-   "label": "Code Archive List",
+   "document_type": "Code Editor",
+   "label": "Code Editor List",
    "quick_list_filter": "[]"
   },
   {
