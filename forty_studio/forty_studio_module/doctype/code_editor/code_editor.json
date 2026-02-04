@@ -7,7 +7,11 @@
  "engine": "InnoDB",
  "field_order": [
   "section_break_wmxw",
-  "naming_series"
+  "naming_series",
+  "section_break_ffik",
+  "code_title",
+  "column_break_bdxu",
+  "code_type"
  ],
  "fields": [
   {
@@ -22,12 +26,32 @@
    "fieldname": "section_break_wmxw",
    "fieldtype": "Section Break",
    "hidden": 1
+  },
+  {
+   "fieldname": "section_break_ffik",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "code_title",
+   "fieldtype": "Data",
+   "label": "Code Title",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_bdxu",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "code_type",
+   "fieldtype": "Select",
+   "label": "code_type",
+   "reqd": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-02-04 14:53:16.638552",
+ "modified": "2026-02-04 14:55:02.249171",
  "modified_by": "Administrator",
  "module": "Forty Studio Module",
  "name": "Code Editor",
