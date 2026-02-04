@@ -53,6 +53,10 @@
   {
    "fieldname": "code_type",
    "fieldtype": "Select",
+   "in_filter": 1,
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
    "label": "Code Type",
    "options": "\nJava Script\nServer Python Script\nPython Code\nServer Command & Code\nFrappe API",
    "reqd": 1
@@ -60,6 +64,10 @@
   {
    "fieldname": "app_name",
    "fieldtype": "Link",
+   "in_filter": 1,
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
    "label": "Application",
    "options": "Application",
    "reqd": 1
@@ -67,6 +75,10 @@
   {
    "fieldname": "doctype_name",
    "fieldtype": "Data",
+   "in_filter": 1,
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
    "label": "Doctype"
   },
   {
@@ -132,7 +144,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-02-04 15:05:32.696479",
+ "modified": "2026-02-04 15:07:14.435016",
  "modified_by": "Administrator",
  "module": "Forty Studio Module",
  "name": "Code Editor",
