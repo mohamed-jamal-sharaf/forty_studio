@@ -34,7 +34,8 @@
   },
   {
    "fieldname": "section_break_ffik",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "label": "Details"
   },
   {
    "fieldname": "code_title",
@@ -71,12 +72,12 @@
   },
   {
    "fieldname": "section_break_okfo",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "label": "Code"
   },
   {
    "fieldname": "code",
    "fieldtype": "Code",
-   "label": "Code",
    "read_only": 1
   },
   {
@@ -118,7 +119,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-02-04 15:02:59.485358",
+ "modified": "2026-02-04 15:03:17.389849",
  "modified_by": "Administrator",
  "module": "Forty Studio Module",
  "name": "Code Editor",
