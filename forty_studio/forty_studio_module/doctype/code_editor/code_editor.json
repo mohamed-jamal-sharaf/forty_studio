@@ -9,6 +9,7 @@
   "naming_series",
   "section_break_ffik",
   "code_title",
+  "app_name",
   "column_break_bdxu",
   "code_type"
  ],
@@ -45,12 +46,19 @@
    "fieldtype": "Select",
    "label": "Code Type",
    "reqd": 1
+  },
+  {
+   "fieldname": "app_name",
+   "fieldtype": "Link",
+   "label": "Application",
+   "options": "Application",
+   "reqd": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-02-04 14:55:36.112363",
+ "modified": "2026-02-04 14:57:39.133054",
  "modified_by": "Administrator",
  "module": "Forty Studio Module",
  "name": "Code Editor",
