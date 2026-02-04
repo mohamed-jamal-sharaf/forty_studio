@@ -161,7 +161,8 @@
   {
    "fieldname": "completion_rate",
    "fieldtype": "Percent",
-   "label": "Completion Rate"
+   "label": "Completion Rate",
+   "precision": "0"
   },
   {
    "fieldname": "column_break_hlme",
@@ -171,7 +172,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-02-04 15:10:16.726043",
+ "modified": "2026-02-04 15:12:17.302928",
  "modified_by": "Administrator",
  "module": "Forty Studio Module",
  "name": "Code Editor",
