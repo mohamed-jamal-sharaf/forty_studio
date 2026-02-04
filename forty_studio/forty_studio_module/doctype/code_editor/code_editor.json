@@ -48,7 +48,7 @@
   {
    "fieldname": "code_title",
    "fieldtype": "Data",
-   "label": "Title",
+   "label": "Code Title",
    "reqd": 1
   },
   {
@@ -179,7 +179,7 @@
  "hide_toolbar": 1,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-02-04 15:15:30.372223",
+ "modified": "2026-02-04 15:16:51.226965",
  "modified_by": "Administrator",
  "module": "Forty Studio Module",
  "name": "Code Editor",
