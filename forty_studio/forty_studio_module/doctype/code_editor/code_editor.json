@@ -15,7 +15,7 @@
   "description",
   "section_break_okfo",
   "code",
-  "tab_2_tab",
+  "code_editor_tab",
   "code_editor"
  ],
  "fields": [
@@ -74,20 +74,20 @@
    "label": "Code"
   },
   {
-   "fieldname": "tab_2_tab",
-   "fieldtype": "Tab Break",
-   "label": "Tab 2"
-  },
-  {
    "fieldname": "code_editor",
    "fieldtype": "HTML",
    "label": "code_editor"
+  },
+  {
+   "fieldname": "code_editor_tab",
+   "fieldtype": "Tab Break",
+   "label": "Code Editor"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-02-04 14:59:56.958036",
+ "modified": "2026-02-04 15:00:13.533670",
  "modified_by": "Administrator",
  "module": "Forty Studio Module",
  "name": "Code Editor",
