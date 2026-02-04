@@ -1,28 +1,32 @@
 {
  "actions": [],
  "allow_rename": 1,
+ "autoname": "naming_series:",
  "creation": "2026-02-04 08:38:51.381912",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "id"
+  "naming_series"
  ],
  "fields": [
   {
-   "fieldname": "id",
+   "default": "COD-.DD.-.MM.-.YY.-",
+   "fieldname": "naming_series",
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "ID",
+   "read_only": 1,
    "reqd": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-02-04 08:39:24.084934",
+ "modified": "2026-02-04 14:53:02.575237",
  "modified_by": "Administrator",
  "module": "Forty Studio Module",
  "name": "Code Editor",
+ "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",
  "permissions": [
   {
