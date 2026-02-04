@@ -124,14 +124,13 @@
   },
   {
    "fieldname": "frappe_help",
-   "fieldtype": "HTML",
-   "label": "Frappe Help"
+   "fieldtype": "HTML"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-02-04 15:03:44.964323",
+ "modified": "2026-02-04 15:03:53.788766",
  "modified_by": "Administrator",
  "module": "Forty Studio Module",
  "name": "Code Editor",
