@@ -17,6 +17,7 @@
   "section_break_wgya",
   "completion_rate",
   "column_break_hlme",
+  "code_rate",
   "section_break_okfo",
   "code",
   "code_editor_tab",
@@ -167,12 +168,17 @@
   {
    "fieldname": "column_break_hlme",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "code_rate",
+   "fieldtype": "Rating",
+   "label": "Code Rate"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-02-04 15:12:17.302928",
+ "modified": "2026-02-04 15:13:00.827128",
  "modified_by": "Administrator",
  "module": "Forty Studio Module",
  "name": "Code Editor",
