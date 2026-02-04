@@ -1,6 +1,5 @@
 {
  "actions": [],
- "allow_rename": 1,
  "autoname": "naming_series:",
  "creation": "2026-02-04 08:38:51.381912",
  "doctype": "DocType",
@@ -34,7 +33,7 @@
   {
    "fieldname": "code_title",
    "fieldtype": "Data",
-   "label": "Code Title",
+   "label": "Title",
    "reqd": 1
   },
   {
@@ -51,7 +50,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-02-04 14:55:02.249171",
+ "modified": "2026-02-04 14:55:14.531299",
  "modified_by": "Administrator",
  "module": "Forty Studio Module",
  "name": "Code Editor",
@@ -74,5 +73,6 @@
  "row_format": "Dynamic",
  "sort_field": "creation",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "title_field": "code_title"
 }
