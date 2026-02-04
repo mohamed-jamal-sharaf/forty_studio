@@ -12,7 +12,9 @@
   "app_name",
   "column_break_bdxu",
   "doctype_name",
-  "description"
+  "description",
+  "section_break_okfo",
+  "code"
  ],
  "fields": [
   {
@@ -59,12 +61,21 @@
    "fieldname": "description",
    "fieldtype": "Small Text",
    "label": "Description"
+  },
+  {
+   "fieldname": "section_break_okfo",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "code",
+   "fieldtype": "Code",
+   "label": "Code"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-02-04 14:59:06.991529",
+ "modified": "2026-02-04 14:59:32.601686",
  "modified_by": "Administrator",
  "module": "Forty Studio Module",
  "name": "Code Editor",
