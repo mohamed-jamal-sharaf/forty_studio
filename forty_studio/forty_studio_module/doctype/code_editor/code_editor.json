@@ -76,7 +76,8 @@
   {
    "fieldname": "code",
    "fieldtype": "Code",
-   "label": "Code"
+   "label": "Code",
+   "read_only": 1
   },
   {
    "fieldname": "code_editor",
@@ -117,7 +118,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-02-04 15:02:48.613997",
+ "modified": "2026-02-04 15:02:59.485358",
  "modified_by": "Administrator",
  "module": "Forty Studio Module",
  "name": "Code Editor",
