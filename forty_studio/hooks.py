@@ -6,6 +6,7 @@ app_email = "hello@capital-project.io"
 app_license = "mit"
 
 boot_session = "forty_studio.boot.set_app_data_map"
+
 # Apps
 # ------------------
 
