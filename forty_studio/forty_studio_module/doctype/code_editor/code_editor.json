@@ -6,6 +6,7 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "section_break_wmxw",
   "naming_series"
  ],
  "fields": [
@@ -16,12 +17,17 @@
    "in_list_view": 1,
    "label": "ID",
    "read_only": 1
+  },
+  {
+   "fieldname": "section_break_wmxw",
+   "fieldtype": "Section Break",
+   "hidden": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-02-04 14:53:08.710328",
+ "modified": "2026-02-04 14:53:16.638552",
  "modified_by": "Administrator",
  "module": "Forty Studio Module",
  "name": "Code Editor",
