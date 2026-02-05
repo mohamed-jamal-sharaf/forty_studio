@@ -30,6 +30,8 @@
   "more_documentations",
   "location",
   "image",
+  "start_date",
+  "end_date",
   "help_tab",
   "frappe_help"
  ],
@@ -185,6 +187,16 @@
    "fieldname": "image",
    "fieldtype": "Attach Image",
    "label": "Image"
+  },
+  {
+   "fieldname": "start_date",
+   "fieldtype": "Date",
+   "label": "Start Date"
+  },
+  {
+   "fieldname": "end_date",
+   "fieldtype": "Date",
+   "label": "End Date"
   }
  ],
  "grid_page_length": 50,
@@ -192,7 +204,7 @@
  "image_field": "image",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-02-05 14:11:36.942824",
+ "modified": "2026-02-05 14:12:21.395616",
  "modified_by": "Administrator",
  "module": "Forty Studio Module",
  "name": "Code Editor",
