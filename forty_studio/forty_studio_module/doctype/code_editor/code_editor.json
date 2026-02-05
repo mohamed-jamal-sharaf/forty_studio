@@ -1,5 +1,6 @@
 {
  "actions": [],
+ "app": "forty_studio",
  "autoname": "naming_series:",
  "creation": "2026-02-04 08:38:51.381912",
  "doctype": "DocType",
@@ -16,6 +17,7 @@
   "naming_series",
   "section_break_wgya",
   "completion_rate",
+  "location",
   "column_break_hlme",
   "code_rate",
   "section_break_okfo",
@@ -172,13 +174,18 @@
    "fieldname": "code_rate",
    "fieldtype": "Rating",
    "label": "Code Rate"
+  },
+  {
+   "fieldname": "location",
+   "fieldtype": "Geolocation",
+   "label": "Location"
   }
  ],
  "grid_page_length": 50,
  "hide_toolbar": 1,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-02-04 15:21:31.173924",
+ "modified": "2026-02-05 14:10:02.199199",
  "modified_by": "Administrator",
  "module": "Forty Studio Module",
  "name": "Code Editor",
