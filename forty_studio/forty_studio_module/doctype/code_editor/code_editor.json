@@ -11,6 +11,7 @@
   "code_type",
   "doctype_name",
   "app_name",
+  "custom_button",
   "column_break_bdxu",
   "description",
   "code_version",
@@ -191,6 +192,11 @@
    "fieldname": "longitude",
    "fieldtype": "Data",
    "label": "longitude"
+  },
+  {
+   "fieldname": "custom_button",
+   "fieldtype": "Button",
+   "label": "Custom Button"
   }
  ],
  "grid_page_length": 50,
@@ -199,7 +205,7 @@
  "index_web_pages_for_search": 1,
  "is_calendar_and_gantt": 1,
  "links": [],
- "modified": "2026-02-05 15:12:52.992695",
+ "modified": "2026-02-05 15:20:22.998586",
  "modified_by": "Administrator",
  "module": "Forty Studio Module",
  "name": "Code Editor",
