@@ -26,7 +26,6 @@
   "documentation_tab",
   "documentation",
   "more_documentations",
-  "location",
   "image",
   "start_date",
   "end_date",
@@ -169,11 +168,6 @@
    "label": "Code Rate"
   },
   {
-   "fieldname": "location",
-   "fieldtype": "Geolocation",
-   "label": "Location"
-  },
-  {
    "fieldname": "image",
    "fieldtype": "Attach Image",
    "label": "Image"
@@ -204,7 +198,7 @@
  "image_field": "image",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-02-05 14:50:29.869839",
+ "modified": "2026-02-05 14:53:52.318734",
  "modified_by": "Administrator",
  "module": "Forty Studio Module",
  "name": "Code Editor",
