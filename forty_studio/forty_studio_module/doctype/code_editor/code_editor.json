@@ -19,8 +19,6 @@
   "completion_rate",
   "column_break_hlme",
   "code_rate",
-  "section_break_okfo",
-  "code",
   "code_editor_tab",
   "code_editor",
   "code_analysis_tab",
@@ -97,16 +95,6 @@
    "fieldname": "description",
    "fieldtype": "Small Text",
    "label": "Description"
-  },
-  {
-   "fieldname": "section_break_okfo",
-   "fieldtype": "Section Break",
-   "label": "Code"
-  },
-  {
-   "fieldname": "code",
-   "fieldtype": "Code",
-   "read_only": 1
   },
   {
    "fieldname": "code_editor",
@@ -216,7 +204,7 @@
  "image_field": "image",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-02-05 14:48:20.229535",
+ "modified": "2026-02-05 14:50:29.869839",
  "modified_by": "Administrator",
  "module": "Forty Studio Module",
  "name": "Code Editor",
