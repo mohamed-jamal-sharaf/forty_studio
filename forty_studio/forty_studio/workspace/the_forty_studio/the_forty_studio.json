@@ -1,5 +1,4 @@
 {
- "app": "forty_studio",
  "charts": [],
  "content": "[{\"id\":\"D8v1Eg9z84\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Forty Studio</span>\",\"col\":12}},{\"id\":\"EXBhQjOnw9\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Code Editor\",\"col\":4}},{\"id\":\"Lb4T2OxkYA\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Forty Studio\",\"col\":4}},{\"id\":\"b7kAcTu4v6\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Forty Studio Permissions\",\"col\":4}}]",
  "creation": "2026-02-04 17:05:48.608001",
@@ -13,9 +12,8 @@
  "indicator_color": "green",
  "is_hidden": 0,
  "label": "The Forty Studio",
- "link_type": "DocType",
  "links": [],
- "modified": "2026-02-04 17:11:25.764183",
+ "modified": "2026-06-28 09:28:35.770814",
  "modified_by": "Administrator",
  "module": "Forty Studio",
  "name": "The Forty Studio",
@@ -25,7 +23,7 @@
  "public": 1,
  "quick_lists": [],
  "roles": [],
- "sequence_id": 26.0,
+ "sequence_id": 31.0,
  "shortcuts": [
   {
    "color": "Grey",
@@ -50,6 +48,5 @@
    "type": "DocType"
   }
  ],
- "title": "The Forty Studio",
- "type": "Workspace"
+ "title": "The Forty Studio"
 }
